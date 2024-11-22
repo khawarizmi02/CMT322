@@ -1,6 +1,6 @@
 // mockData.ts
 
-export type MatchType = {
+export type BadmintonMatchType = {
     id: string;
     category: "Men's Singles" | "Women's Singles" | "Men's Doubles" | "Women's Doubles" | "Mixed Doubles";
     playerA: string;
@@ -23,8 +23,16 @@ export type MatchType = {
     "Women's Doubles",
     "Mixed Doubles"
   ] as const;
+
+  export const badmintonEventDetails = {
+    title: "Badminton",
+    about: "Badminton events in SUKAD feature intense competitions across singles and doubles categories. Matches are played at the USM Sports Complex, showcasing the best talent from each Desasiswa.",
+    previousChampion: "Desasiswa Restu",
+    venue: "USM Sports Complex",
+    image: "https://images.unsplash.com/photo-1721760886493-61c47c1caec9?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  };
   
-  export const badmintonMatches: MatchType[] = [
+  export const badmintonMatches: BadmintonMatchType[] = [
     // Current Matches
     {
       id: 'bdm-001',
@@ -35,8 +43,6 @@ export type MatchType = {
       date: "2024-11-23",
       time: "10:00 AM",
       status: "ongoing",
-      scoreA: 15,
-      scoreB: 12,
       desasiswaA: "Restu",
       desasiswaB: "Tekun"
     },
