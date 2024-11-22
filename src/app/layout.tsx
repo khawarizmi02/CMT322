@@ -1,32 +1,29 @@
-import type { Metadata } from "next";
+"use client";
+import React from "react";
 import localFont from "next/font/local";
 import "./globals.css";
 
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
-
-export const metadata: Metadata = {
-  title: "SUKAD@USM",
-  icons: {
-    icon: "/icon.svg",
-  },
-};
+import { metadata } from "./metadata";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isClient, setisClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setisClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null;
+  }
+
   return (
     <html lang="en">
       <body className={`antialiased`}>
-        <SidebarProvider>
-          <AppSidebar />
-          <main className="flex flex-col items-center">
-            <SidebarTrigger />
-            {children}
-          </main>
-        </SidebarProvider>
+        <main className="flex flex-col items-center">{children}</main>
       </body>
     </html>
   );
