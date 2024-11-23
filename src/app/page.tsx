@@ -39,21 +39,37 @@
 //   );
 // }
 
+import React from "react";
+import { Inter } from "next/font/google";
+import {
+  FaMapMarkerAlt,
+  FaBookmark,
+  FaBell,
+  FaPlay,
+  FaArrowRight,
+} from "react-icons/fa";
+import Image from "next/image";
 
-import React from 'react';
-import { Inter } from 'next/font/google';
-import { FaMapMarkerAlt, FaBookmark, FaBell, FaPlay, FaArrowRight } from 'react-icons/fa';
-import Image from 'next/image';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { NewsDetails } from "@/data/mock-news";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { NewsDetails } from '@/data/mock-news';
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-
-
-
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 const Home: React.FC = () => {
   return (
@@ -64,11 +80,29 @@ const Home: React.FC = () => {
           <h1 className="text-xl font-bold">Announcement Topic</h1>
           <h2 className="text-lg font-bold">Announcement Sub Topic</h2>
           <p className="justify-text">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam suscipit tempor nisi, eget tempor ante. Aliquam erat volutpat. Aliquam tristique, purus eu sodales volutpat, purus odio ullamcorper nisl, vel pulvinar diam erat vel purus. Nunc vel aliquam lectus. Cras commodo dolor ac nibh scelerisque porta. Phasellus vitae velit non nibh aliquam mollis in non massa. Nunc id suscipit mauris. Nulla facilisi. Donec ornare, nulla in gravida molestie, ligula massa posuere mi, nec tempor sapien erat in elit. Cras molestie a ligula aliquet tempor. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi vel nisi id sem condimentum sollicitudin et eget mi. Integer ac sollicitudin turpis. Ut condimentum neque vitae tellus pretium consectetur. Curabitur tempus tellus quis luctus consectetur.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam
+            suscipit tempor nisi, eget tempor ante. Aliquam erat volutpat.
+            Aliquam tristique, purus eu sodales volutpat, purus odio ullamcorper
+            nisl, vel pulvinar diam erat vel purus. Nunc vel aliquam lectus.
+            Cras commodo dolor ac nibh scelerisque porta. Phasellus vitae velit
+            non nibh aliquam mollis in non massa. Nunc id suscipit mauris. Nulla
+            facilisi. Donec ornare, nulla in gravida molestie, ligula massa
+            posuere mi, nec tempor sapien erat in elit. Cras molestie a ligula
+            aliquet tempor. Vestibulum ante ipsum primis in faucibus orci luctus
+            et ultrices posuere cubilia curae; Morbi vel nisi id sem condimentum
+            sollicitudin et eget mi. Integer ac sollicitudin turpis. Ut
+            condimentum neque vitae tellus pretium consectetur. Curabitur tempus
+            tellus quis luctus consectetur.
           </p>
         </div>
         <div className="w-1/3 flex justify-center items-center">
-        <Image src="/images/football.jpg" alt="Football" layout="intrinsic" width={300} height={200} />
+          <Image
+            src="/images/football.jpg"
+            alt="Football"
+            layout="intrinsic"
+            width={300}
+            height={200}
+          />
         </div>
       </div>
 
@@ -92,34 +126,44 @@ const Home: React.FC = () => {
       <div>
         <div className="flex bg-gray-100 p-4">
           <h1 className="text-lg font-medium">News!</h1>
-          <button title='News' className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2">
+          <button
+            title="News"
+            className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2"
+          >
             <FaArrowRight />
           </button>
           <ScrollArea className="w-full whitespace-nowrap rounded-md border">
-            <div className='flex gap-4'>
+            <div className="flex gap-4">
               {NewsDetails.map((news) => (
-                <div className='w-[400px] h-[300px] ' >
-                <Card className='w-full'>
-                  <CardHeader>
-                  <CardTitle>{news.title}</CardTitle>
-                  <CardDescription>{news.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                  <Image src={`${news.image}`} alt="Football" layout="intrinsic" width={300} height={200} className='h' />
-                  </CardContent>
-                  <CardFooter>
-                  <button className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2">
-                    <FaPlay />
-                    Watch Now!
-                  </button>
-                  </CardFooter>
-                </Card>
+                <div className="w-[400px] h-[300px] ">
+                  <Card className="w-full">
+                    <CardHeader>
+                      <CardTitle>{news.title}</CardTitle>
+                      <CardDescription>{news.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Image
+                        src={`${news.image}`}
+                        alt="Football"
+                        layout="intrinsic"
+                        width={300}
+                        height={200}
+                        className="h"
+                      />
+                    </CardContent>
+                    <CardFooter>
+                      <button className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2">
+                        <FaPlay />
+                        Watch Now!
+                      </button>
+                    </CardFooter>
+                  </Card>
                 </div>
-                
-              ))}</div>
-              <ScrollBar orientation="horizontal" />
-              </ScrollArea>
-            {/* <Card>
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+          {/* <Card>
               <CardHeader>
                 <CardTitle>{NewsCont}</CardTitle>
                 <CardDescription>News Description</CardDescription>
@@ -137,14 +181,12 @@ const Home: React.FC = () => {
           {/* </div> */}
         </div>
 
-      {/* About Us */}
-      <div className="bg-gray-100 p-4">
-        <h2 className="text-lg font-medium">About Us</h2>
-        <p>
-          Learn more about our organization and our mission.
-        </p>
+        {/* About Us */}
+        <div className="bg-gray-100 p-4">
+          <h2 className="text-lg font-medium">About Us</h2>
+          <p>Learn more about our organization and our mission.</p>
+        </div>
       </div>
-    </div>
     </div>
   );
 };
