@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, MapPin, Trophy, Clock, Filter, Users, Edit, Plus } from 'lucide-react';
+import { CalendarDays, MapPin, Trophy, Clock, Filter, Users, Edit } from 'lucide-react';
 import { badmintonMatches, badmintonCategories, badmintonEventDetails, BadmintonMatchType } from '@/data/mock-badminton';
 import { volleyballMatches, volleyballCategories, volleyballEventDetails, VolleyballMatchType } from '@/data/mock-volleyball';
 import { useRouter } from 'next/navigation';
@@ -17,7 +17,6 @@ type MatchType = BadmintonMatchType | VolleyballMatchType;
 const EventPage = () => {
 const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
 const [eventType, setEventType] = useState('badminton');
-const router = useRouter();
 
 const eventDetails = eventType === 'badminton' ? badmintonEventDetails : volleyballEventDetails;
 const categories = eventType === 'badminton' ? badmintonCategories : volleyballCategories;
@@ -55,111 +54,82 @@ const getStatusColor = (status: string) => {
 	}
 };
 
-const handleEdit = (match: MatchType) => {
-	router.push(`/organizer/matches/${match.id}?type=${eventType}`);
-}
-
-const handleCreateMatch = () => {
-    router.push('/organizer/matches/create');
-}
-
 const MatchCard = ({ match }: { match: MatchType }) => (
 	<Card className="mb-4 hover:shadow-lg transition-shadow duration-200">
-      <CardContent className="pt-6">
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex-1">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="bg-opacity-10">
-                  {match.category}
-                </Badge>
-                <span className={`w-2 h-2 rounded-full ${getStatusColor(match.status)}`} />
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0"
-                onClick={() => handleEdit(match)}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold">
-                {isBadmintonMatch(match) ? (
-                  <span>{match.playerA} vs {match.playerB}</span>
-                ) : (
-                  <span>{match.teamA} vs {match.teamB}</span>
-                )}
-              </h3>
-              <div className="text-sm font-medium text-muted-foreground">
-                {match.desasiswaA} vs {match.desasiswaB}
-              </div>
-            </div>
+	<CardContent className="pt-6">
+		<div className="flex justify-between items-start mb-4">
+			<div className="flex-1">
+				<div className="flex items-center gap-2 mb-3">
+					<Badge variant="outline" className="bg-opacity-10">
+						{match.category}
+					</Badge>
+					<span className={`w-2 h-2 rounded-full ${getStatusColor(match.status)}`} />
+				</div>
+				
+				<div className="space-y-2">
+					<h3 className="text-xl font-bold">
+						{isBadmintonMatch(match) ? (
+						<span>{match.playerA} vs {match.playerB}</span>
+						) : (
+						<span>{match.teamA} vs {match.teamB}</span>
+						)}
+					</h3>
+					<div className="text-sm font-medium text-muted-foreground">
+						{match.desasiswaA} vs {match.desasiswaB}
+					</div>
+				</div>
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="flex items-center text-sm text-muted-foreground">
-                <CalendarDays className="mr-2 h-4 w-4" />
-                {match.date}
-              </div>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <Clock className="mr-2 h-4 w-4" />
-                {match.time}
-              </div>  
-              <div className="flex items-center text-sm text-muted-foreground">
-                <MapPin className="mr-2 h-4 w-4" />
-                {match.venue}
-              </div>
-              {match.status === 'completed' && (
-                <div className="flex items-center text-sm font-medium">
-                  <Trophy className="mr-2 h-4 w-4 text-yellow-500" />
-                  {isBadmintonMatch(match) ? `${match.scoreA} - ${match.scoreB}` : `${match.scoreA} - ${match.scoreB}`}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-between items-center">
-        <Badge 
-          variant="secondary"
-          className={`${getStatusColor(match.status)} text-white`}
-        >
-          {match.status.charAt(0).toUpperCase() + match.status.slice(1)}
-        </Badge>
-      </CardFooter>
-    </Card>
+				<div className="grid grid-cols-2 gap-4 mt-4">
+					<div className="flex items-center text-sm text-muted-foreground">
+						<CalendarDays className="mr-2 h-4 w-4" />
+						{match.date}
+					</div>
+					<div className="flex items-center text-sm text-muted-foreground">
+						<Clock className="mr-2 h-4 w-4" />
+						{match.time}
+					</div>	
+					<div className="flex items-center text-sm text-muted-foreground">
+						<MapPin className="mr-2 h-4 w-4" />
+						{match.venue}
+					</div>
+					{match.status === 'completed' && (
+					<div className="flex items-center text-sm font-medium">
+						<Trophy className="mr-2 h-4 w-4 text-yellow-500" />
+						{isBadmintonMatch(match) ? `${match.scoreA} - ${match.scoreB}` : `${match.scoreA} - ${match.scoreB}`}
+					</div>
+					)}
+				</div>
+			</div>
+		</div>
+	</CardContent>
+	<CardFooter className="flex justify-between items-center">
+		<Badge 
+		variant="secondary"
+		className={`${getStatusColor(match.status)} text-white`}
+		>
+		{match.status.charAt(0).toUpperCase() + match.status.slice(1)}
+		</Badge>
+	</CardFooter>
+	</Card>
 );
 
 return (
 	<div className="flex flex-col lg:flex-row max-w-7xl mx-auto">
 	<div className="lg:w-2/3 p-6 space-y-6">
 		<div className="flex justify-between items-center mb-8">
-            <div>
-                <h1 className="text-3xl font-bold mb-2">{eventDetails.title}</h1>
-                <p className="text-muted-foreground">Track all matches and results</p>
-            </div>
-            <div className='flex flex-col gap-2'>
-                <Button
-                    onClick={() => setEventType(eventType === 'badminton' ? 'volleyball' : 'badminton')}
-                    variant="outline"
-                    className="gap-2"
-                >
-                    <Users className="h-4 w-4" />
-                    Switch to {eventType === 'badminton' ? 'Volleyball' : 'Badminton'}
-                </Button>
-                <Button
-                    onClick={handleCreateMatch}
-                    variant="default"
-                    className="gap-2"
-                    >
-                    <Plus className="h-4 w-4" />
-                    Create Match
-                </Button>
-            </div>
-	    </div>
-        
+		<div>
+			<h1 className="text-3xl font-bold mb-2">{eventDetails.title}</h1>
+			<p className="text-muted-foreground">Track all matches and results</p>
+		</div>
+		<Button
+			onClick={() => setEventType(eventType === 'badminton' ? 'volleyball' : 'badminton')}
+			variant="outline"
+			className="gap-2"
+		>
+			<Users className="h-4 w-4" />
+			Switch to {eventType === 'badminton' ? 'Volleyball' : 'Badminton'}
+		</Button>
+		</div>
 
 		<div className="flex items-center gap-4 mb-6">
 		<div className="flex items-center gap-2 bg-secondary/50 p-2 rounded-lg">
