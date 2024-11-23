@@ -6,7 +6,9 @@
 		"dev": "next dev --turbopack",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "next lint",
+		"inspect": "set NODE_OPTIONS=--inspect && next dev",
+		"format": "prettier --write ."
 	},
 	"dependencies": {
 		"@radix-ui/react-accordion": "^1.2.1",
@@ -16,6 +18,8 @@
 		"@radix-ui/react-dialog": "^1.1.2",
 		"@radix-ui/react-dropdown-menu": "^2.1.2",
 		"@radix-ui/react-hover-card": "^1.1.2",
+		"@radix-ui/react-label": "^2.1.0",
+		"@radix-ui/react-popover": "^1.1.2",
 		"@radix-ui/react-radio-group": "^1.2.1",
 		"@radix-ui/react-scroll-area": "^1.2.1",
 		"@radix-ui/react-select": "^2.1.2",
@@ -47,6 +51,7 @@
 		"eslint": "^7.32.0",
 		"eslint-config-next": "15.0.3",
 		"postcss": "^8",
+		"prettier": "^3.3.3",
 		"tailwindcss": "^3.4.1",
 		"typescript": "^5"
 	}
