@@ -88,7 +88,7 @@ const Home: React.FC = () => {
         </button>
       </div>
 
-      {/* News */}
+      {/* News
       <div>
         <div className="flex bg-gray-100 p-4">
           <h1 className="text-lg font-medium">News!</h1>
@@ -99,13 +99,13 @@ const Home: React.FC = () => {
             <div className='flex gap-4'>
               {NewsDetails.map((news) => (
                 <div className='w-[400px] h-[300px] ' >
-                <Card className='w-full'>
+                <Card className='w-full h-full'>
                   <CardHeader>
                   <CardTitle>{news.title}</CardTitle>
                   <CardDescription>{news.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                  <Image src={`${news.image}`} alt="Football" layout="intrinsic" width={300} height={200} className='h' />
+                  <Image src={`${news.image}`} alt="Football" layout="intrinsic" width={300} height={200} />
                   </CardContent>
                   <CardFooter>
                   <button className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2">
@@ -118,23 +118,47 @@ const Home: React.FC = () => {
                 
               ))}</div>
               <ScrollBar orientation="horizontal" />
-              </ScrollArea>
-            {/* <Card>
-              <CardHeader>
-                <CardTitle>{NewsCont}</CardTitle>
-                <CardDescription>News Description</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Image src="/images/football.jpg" alt="Football" layout="intrinsic" width={300} height={200} />
-              </CardContent>
-              <CardFooter>
-                <button className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2">
-                  <FaPlay />
-                  Watch Now!
-                </button>
-              </CardFooter>
-            </Card> */}
-          {/* </div> */}
+            </ScrollArea>
+        </div> */}
+        <div className="flex bg-gray-100 p-4">
+          <h1 className="text-lg font-medium">News!</h1>
+          <button title='News' className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2">
+            <FaArrowRight />
+          </button>
+          <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+            <div className='flex gap-4'>
+              {NewsDetails.map((news) => (
+                <div className='w-[400px] h-[400px]'>
+                  <Card className='w-full h-full flex flex-col'>
+                    <CardHeader className='p-4 space-y-2 flex-shrink-0'>
+                      <CardTitle className='text-lg'>{news.title}</CardTitle>
+                      <CardDescription className='text-sm line-clamp-2'> {/* Added line-clamp-2 */}
+                        {news.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className='p-4 flex-grow flex items-center justify-center'>
+                      <div className='relative w-full h-[200px]'>
+                        <Image 
+                          src={`${news.image}`} 
+                          alt="Football" 
+                          layout="fill"
+                          objectFit="contain"
+                          className='rounded-md'
+                        />
+                      </div>
+                    </CardContent>
+                    <CardFooter className='p-4 flex-shrink-0'>
+                      <button className="bg-transparent text-[#654321] px-6 py-2 rounded-md flex items-center gap-2 text-sm">
+                        <FaPlay />
+                        Watch Now!
+                      </button>
+                    </CardFooter>
+                  </Card>
+                </div>
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </div>
 
       {/* About Us */}
@@ -145,7 +169,7 @@ const Home: React.FC = () => {
         </p>
       </div>
     </div>
-    </div>
+    
   );
 };
 
