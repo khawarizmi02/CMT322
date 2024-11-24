@@ -49,6 +49,7 @@ import {
   FaArrowRight,
 } from "react-icons/fa";
 import Image from "next/image";
+import Link from 'next/link';
 
 import {
   Card,
@@ -67,6 +68,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { NewsDetails } from "@/data/mock-news";
+import { SportsListDetails } from "@/data/mock-sportslist";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -122,47 +124,18 @@ const Home: React.FC = () => {
         </button>
       </div>
 
-      {/* News
-      <div>
-        <div className="flex bg-gray-100 p-4">
-          <h1 className="text-lg font-medium">News!</h1>
-          <button
-            title="News"
-            className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2"
-          >
-            <FaArrowRight />
+      {/* News */}
+        
+        <div className="bg-gray-100 px-4 pt-4">
+          <button title="News" className="text-[#654321] flex flex-row gap-2 w-[160px]">
+            <h1 className="text-xl font-medium">News!</h1>
+            <div className="pt-1.5">
+              <FaArrowRight/>
+            </div>
           </button>
-          <ScrollArea className="w-full whitespace-nowrap rounded-md border">
-            <div className="flex gap-4">
-              {NewsDetails.map((news) => (
-                <div className='w-[400px] h-[300px] ' >
-                <Card className='w-full h-full'>
-                  <CardHeader>
-                  <CardTitle>{news.title}</CardTitle>
-                  <CardDescription>{news.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                  <Image src={`${news.image}`} alt="Football" layout="intrinsic" width={300} height={200} />
-                  </CardContent>
-                  <CardFooter>
-                  <button className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2">
-                    <FaPlay />
-                    Watch Now!
-                  </button>
-                  </CardFooter>
-                </Card>
-                </div>
-                
-              ))}</div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-        </div> */}
+        </div>
         <div className="flex bg-gray-100 p-4">
-          <h1 className="text-lg font-medium">News!</h1>
-          <button title='News' className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2">
-            <FaArrowRight />
-          </button>
-          <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+          <ScrollArea className="w-full whitespace-nowrap rounded-md">
             <div className='flex gap-4'>
               {NewsDetails.map((news) => (
                 <div className='w-[400px] h-[400px]'>
@@ -198,13 +171,97 @@ const Home: React.FC = () => {
           </ScrollArea>
         </div>
 
-      {/* About Us */}
-      <div className="bg-gray-100 p-4">
-        <h2 className="text-lg font-medium">About Us</h2>
-        <p>
-          Learn more about our organization and our mission.
-        </p>
+        {/* Sports List */}
+        <div className="bg-gray-100 px-4 pt-4">
+          <button title="SportsList" className="text-[#654321] flex flex-row gap-2 w-[160px]">
+            <h1 className="text-xl font-medium">Sports List!</h1>
+            <div className="pt-1.5">
+              <FaArrowRight/>
+            </div>
+          </button>
+        </div>
+        <div className="flex bg-gray-100 p-4 pb-10">
+        <ScrollArea className="w-full whitespace-nowrap rounded-md">
+          <div className='flex gap-4'>
+            {SportsListDetails.map((sports) => (
+              <><div className='w-[200px] h-[250px]'>
+                <Card className='w-full h-full flex flex-col'>
+                  <CardHeader className='p-2 space-y-2 flex-shrink-0'>
+                    <CardTitle className='text-lg'>{sports.title}</CardTitle>
+                    <CardDescription className='text-sm line-clamp-2'> {/* Added line-clamp-2 */}
+                      {sports.category}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className='p-2 flex-grow flex items-center justify-center'>
+                    <div className='relative w-full h-full'>
+                      <Image
+                        src={`${sports.image}`}
+                        alt="Football"
+                        layout="fill"
+                        objectFit="contain"
+                        className='rounded-md' />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              </>))} 
+            </div><ScrollBar orientation="horizontal" />
+        </ScrollArea>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-transparent py-8 px-6">
+        <div className="max-w-7xl mx-auto flex justify-between items-start">
+          {/* Left section with three columns */}
+          <div className="flex gap-20">
+            {/* Matches Column */}
+            <div className="flex flex-col">
+              <h3 className="font-semibold text-lg mb-4">Matches</h3>
+              <ul className="space-y-2">
+                <li><Link href="/current-matches" className="text-gray-600 hover:text-gray-900">Current Matches</Link></li>
+                <li><Link href="/leaderboard" className="text-gray-600 hover:text-gray-900">Leaderboard</Link></li>
+                <li><Link href="/schedule" className="text-gray-600 hover:text-gray-900">Match Schedule</Link></li>
+                <li><Link href="/history" className="text-gray-600 hover:text-gray-900">Match History</Link></li>
+              </ul>
+            </div>
+
+            {/* Join Us Column */}
+            <div className="flex flex-col">
+              <h3 className="font-semibold text-lg mb-4">Join Us</h3>
+              <ul className="space-y-2">
+                <li><Link href="/register" className="text-gray-600 hover:text-gray-900">Register Now</Link></li>
+                <li><Link href="/news" className="text-gray-600 hover:text-gray-900">News</Link></li>
+                <li><Link href="/sukad-history" className="text-gray-600 hover:text-gray-900">SUKAD History</Link></li>
+                <li><Link href="/volunteer" className="text-gray-600 hover:text-gray-900">Volunteer as Helpers</Link></li>
+              </ul>
+            </div>
+
+            {/* About Us Column */}
+            <div className="flex flex-col">
+              <h3 className="font-semibold text-lg mb-4">About Us</h3>
+              <ul className="space-y-2">
+                <li><Link href="/support" className="text-gray-600 hover:text-gray-900">Support</Link></li>
+                <li><Link href="/developers" className="text-gray-600 hover:text-gray-900">Developers</Link></li>
+                <li><Link href="/contact" className="text-gray-600 hover:text-gray-900">Contact Us</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Logo on the right */}
+          <div className="flex items-start">
+            <div className="relative w-[350px] h-[140px]">
+              <Image
+                src="/images/USM_logo.png" // Replace with your logo path
+                alt="App Logo"
+                layout="fill"
+                objectFit="contain"
+                className="rounded-md"
+              />
+            </div>
+          </div>
+        </div>
+      </footer>
+
     </div>
     
   );
