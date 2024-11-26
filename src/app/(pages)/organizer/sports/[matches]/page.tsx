@@ -41,7 +41,10 @@ import {
   volleyballEventDetails,
   VolleyballMatchType,
 } from '@/data/mock-volleyball';
+<<<<<<< HEAD
 import { set } from 'date-fns';
+=======
+>>>>>>> 8260387d4843da509b45e03b196a651b802c9937
 
 type SportConfig = {
   matches: any[];
@@ -69,6 +72,7 @@ const SportConfigMap: { [key: string]: SportConfig } = {
 };
 
 const EventPage = () => {
+<<<<<<< HEAD
   const params = useParams();
   console.log('console Params:', params.matches);
   const router = useRouter();
@@ -92,6 +96,23 @@ const EventPage = () => {
 
   const [selectedCategory, setSelectedCategory] =
     useState<string>('All Categories');
+=======
+
+  const params = useParams();
+  console.log('Params:', params);
+  const router = useRouter();
+  
+  //Tukar SINI
+  const sportType = params.sport as string || 'volleyball';
+
+  useEffect(() => {
+    console.log('Sport Type:', sportType);
+  }, [sportType]);
+
+  const sportConfig = SportConfigMap[sportType];
+
+  const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
+>>>>>>> 8260387d4843da509b45e03b196a651b802c9937
   const [currentMatches, setCurrentMatches] = useState<any[]>([]);
   const [upcomingMatches, setUpcomingMatches] = useState<any[]>([]);
   const [pastMatches, setPastMatches] = useState<any[]>([]);
@@ -103,6 +124,7 @@ const EventPage = () => {
         return matches.filter((match) => match.category === selectedCategory);
       };
 
+<<<<<<< HEAD
       setCurrentMatches(
         filterMatchesByCategory(
           sportConfig.matches.filter((match) => match.status === 'ongoing')
@@ -118,6 +140,17 @@ const EventPage = () => {
           sportConfig.matches.filter((match) => match.status === 'completed')
         )
       );
+=======
+      setCurrentMatches(filterMatchesByCategory(
+        sportConfig.matches.filter((match) => match.status === 'ongoing')
+      ));
+      setUpcomingMatches(filterMatchesByCategory(
+        sportConfig.matches.filter((match) => match.status === 'upcoming')
+      ));
+      setPastMatches(filterMatchesByCategory(
+        sportConfig.matches.filter((match) => match.status === 'completed')
+      ));
+>>>>>>> 8260387d4843da509b45e03b196a651b802c9937
     }
   }, [sportConfig, selectedCategory]);
 
@@ -223,7 +256,11 @@ const EventPage = () => {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-2">
+<<<<<<< HEAD
               {sportConfig?.eventDetails.title}
+=======
+              {sportConfig.eventDetails.title}
+>>>>>>> 8260387d4843da509b45e03b196a651b802c9937
             </h1>
             <p className="text-muted-foreground">
               Track all matches and results
@@ -252,12 +289,20 @@ const EventPage = () => {
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
+<<<<<<< HEAD
                 {sportConfig &&
                   sportConfig.categories.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
                     </SelectItem>
                   ))}
+=======
+                {sportConfig.categories.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+>>>>>>> 8260387d4843da509b45e03b196a651b802c9937
               </SelectContent>
             </Select>
           </div>
@@ -345,17 +390,30 @@ const EventPage = () => {
         <Card className="bg-gradient-to-br from-primary/5 to-primary/10">
           <CardHeader>
             <CardTitle className="text-xl font-bold">
+<<<<<<< HEAD
               About {sportConfig?.eventDetails.title}
+=======
+              About {sportConfig.eventDetails.title}
+>>>>>>> 8260387d4843da509b45e03b196a651b802c9937
             </CardTitle>
           </CardHeader>
           <CardContent>
             <img
+<<<<<<< HEAD
               src={sportConfig?.eventDetails.image}
               alt={sportConfig?.eventDetails.title}
               className="w-full h-48 object-cover rounded-lg mb-6"
             />
             <p className="text-muted-foreground mb-6">
               {sportConfig?.eventDetails.about}
+=======
+              src={sportConfig.eventDetails.image}
+              alt={sportConfig.eventDetails.title}
+              className="w-full h-48 object-cover rounded-lg mb-6"
+            />
+            <p className="text-muted-foreground mb-6">
+              {sportConfig.eventDetails.about}
+>>>>>>> 8260387d4843da509b45e03b196a651b802c9937
             </p>
 
             <div className="space-y-4">
@@ -364,7 +422,11 @@ const EventPage = () => {
                 <div>
                   <p className="text-sm font-medium">Previous Champion</p>
                   <p className="text-sm text-muted-foreground">
+<<<<<<< HEAD
                     {sportConfig?.eventDetails.previousChampion}
+=======
+                    {sportConfig.eventDetails.previousChampion}
+>>>>>>> 8260387d4843da509b45e03b196a651b802c9937
                   </p>
                 </div>
               </div>
@@ -374,7 +436,11 @@ const EventPage = () => {
                 <div>
                   <p className="text-sm font-medium">Venue</p>
                   <p className="text-sm text-muted-foreground">
+<<<<<<< HEAD
                     {sportConfig?.eventDetails.venue}
+=======
+                    {sportConfig.eventDetails.venue}
+>>>>>>> 8260387d4843da509b45e03b196a651b802c9937
                   </p>
                 </div>
               </div>
@@ -386,4 +452,8 @@ const EventPage = () => {
   );
 };
 
+<<<<<<< HEAD
 export default EventPage;
+=======
+export default EventPage;
+>>>>>>> 8260387d4843da509b45e03b196a651b802c9937
