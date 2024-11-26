@@ -17,18 +17,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // <SidebarProvider>
-    //   <AppSidebar />
-    //   <main>
-    //     <SidebarTrigger />
-    //     <ScrollArea className="h-[1000px]">{children}</ScrollArea>
-    //   </main>
-    // </SidebarProvider>
+    <SidebarProvider>
+      <AppSidebar />
+      <main>
+        <SidebarTrigger />
+        <ScrollArea className="h-[1000px]">{children}</ScrollArea>
+      </main>
+    </SidebarProvider>
 
-    <html lang="en">
-      <body className={`antialiased`}>
-        <main className="flex flex-col items-center">{children}</main>
-      </body>
-    </html>
+    // <html lang="en">
+    //   <body className={`antialiased`}>
+    //     <main className="flex flex-col items-center">{children}</main>
+    //   </body>
+    // </html>
   );
 }
