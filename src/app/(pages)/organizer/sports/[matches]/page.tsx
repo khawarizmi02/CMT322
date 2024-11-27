@@ -34,6 +34,12 @@ import {
   badmintonCategories,
   badmintonEventDetails,
   BadmintonMatchType,
+  BadmintonLeaderboardType,
+  badmintonMenDoublesLeaderboard,
+  badmintonMenSinglesLeaderboard,
+  badmintonMixedDoublesLeaderboard,
+  badmintonWomenDoublesLeaderboard,
+  badmintonWomenSinglesLeaderboard,
 } from '@/data/mock-badminton';
 import {
   volleyballMatches,
@@ -42,6 +48,15 @@ import {
   VolleyballMatchType,
 } from '@/data/mock-volleyball';
 import { set } from 'date-fns';
+import Leaderboard from '@/components/Leaderboard';
+
+const categoryLeaderboard: { [key: string]: BadmintonLeaderboardType[] } = {
+  "Men's Singles": badmintonMenSinglesLeaderboard,
+  "Women's Singles": badmintonWomenSinglesLeaderboard,
+  "Men's Doubles": badmintonMenDoublesLeaderboard,
+  "Women's Doubles": badmintonWomenDoublesLeaderboard,
+  'Mixed Doubles': badmintonMixedDoublesLeaderboard,
+};
 
 type SportConfig = {
   matches: any[];
@@ -67,6 +82,7 @@ const SportConfigMap: { [key: string]: SportConfig } = {
     eventDetails: volleyballEventDetails,
   },
 };
+
 
 const EventPage = () => {
   const params = useParams();
@@ -279,6 +295,14 @@ const EventPage = () => {
             </Select>
           </div>
         </div>
+
+        {selectedCategory !== 'All Categories' && (
+          <Leaderboard
+            data={categoryLeaderboard[selectedCategory]}
+            event={sportType}
+            category={selectedCategory}
+          />
+        )}
 
         <Tabs defaultValue="current" className="space-y-4">
           <TabsList className="w-full justify-start gap-2">
