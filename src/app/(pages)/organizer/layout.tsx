@@ -23,11 +23,5 @@ export default function RootLayout({
         <ScrollArea className="h-[1000px]">{children}</ScrollArea>
       </main>
     </SidebarProvider>
-
-    // <html lang="en">
-    //   <body className={`antialiased`}>
-    //     <main className="flex flex-col items-center">{children}</main>
-    //   </body>
-    // </html>
   );
 }

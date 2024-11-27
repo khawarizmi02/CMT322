@@ -80,7 +80,7 @@ const Home: React.FC = () => {
   return (
     <div className={`${inter.className} grid grid-cols-1 max-w-full `}>
       {/* Announcement */}
-      <div className="bg-gray-100 p-4 w-screen h-96 flex">
+      <div className="bg-gray-100 p-4 w-full h-96 flex">
         <div className="w-1/2 p-4">
           <h1 className="text-xl font-bold">Announcement Topic</h1>
           <h2 className="text-lg font-bold">Announcement Sub Topic</h2>
