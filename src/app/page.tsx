@@ -70,6 +70,7 @@ import {
 import { NewsDetails } from '@/data/mock-news';
 import { SportsListDetails } from '@/data/mock-sportslist';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import LeaderboardDesasiswa from '@/components/LeaderboardDesasiswa';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -174,6 +175,22 @@ const Home: React.FC = () => {
           </div>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
+      </div>
+
+      {/* Leaderboard */}
+      <div className="bg-gray-100 px-4 pt-4">
+        <button
+          title="Leaderboard"
+          className="text-[#654321] flex flex-row gap-2 w-[160px]"
+        >
+          <h1 className="text-xl font-medium">Leaderboard!</h1>
+          <div className="pt-1.5">
+            <FaArrowRight />
+          </div>
+        </button>
+      </div>
+      <div className="flex bg-gray-100 p-4">
+        <LeaderboardDesasiswa />
       </div>
 
       {/* Sports List */}
