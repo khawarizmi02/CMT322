@@ -1,12 +1,31 @@
 import React from 'react';
 import { Inter } from 'next/font/google';
-import { FaMapMarkerAlt, FaBookmark, FaBell, FaPlay, FaArrowRight } from 'react-icons/fa';
+import {
+  FaMapMarkerAlt,
+  FaBookmark,
+  FaBell,
+  FaPlay,
+  FaArrowRight,
+} from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { NewsDetails } from '@/data/mock-news';
 import { SportsListDetails } from '@/data/mock-sportslist';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -15,9 +34,9 @@ const inter = Inter({ subsets: ['latin'] });
 
 const GuestHome: React.FC = () => {
   return (
-    <div className={`${inter.className} grid grid-cols-1 max-w-full `}>
+    <div className={`${inter.className} grid grid-cols-1 w-full`}>
       {/* Announcement */}
-      <div className="bg-gray-100 p-4 w-screen h-96 flex">
+      <div className="bg-gray-100 p-4 w-full h-96 flex">
         <div className="w-1/2 p-4">
           <h1 className="text-3xl font-bold">Announcement Topic</h1>
           <h2 className="text-lg font-bold">Announcement Sub Topic</h2>

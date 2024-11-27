@@ -82,7 +82,7 @@ export const AppSidebar = () => {
           ${isOpen ? '-translate-x-0' : '-translate-x-full'}
         `}
       >
-        <div className="p-4 flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16">
           <h2 className={`text-xl font-bold ${!isOpen && 'hidden'}`}>
             SUKAD-USM
           </h2>
@@ -143,7 +143,7 @@ export const AppSidebar = () => {
         className={`
           transition-all duration-300 ease-in-out
           ${isOpen ? 'md:pl-64 pl-0' : 'md:pl-16 pl-0'}
-          pt-16 p-4
+          pt-16
         `}
       >
         {/* Your page content will go here */}
