@@ -1,79 +1,182 @@
 'use client';
-import { useState } from 'react';
-import { Calendar, Home, Inbox, Search, Settings, List } from 'lucide-react';
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-} from '@/components/ui/sidebar';
-import { title } from 'process';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { 
+  Home, 
+  Newspaper, 
+  Trophy, 
+  UserPlus, 
+  Settings, 
+  LogOut, 
+  Menu, 
+  X 
+} from 'lucide-react';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogClose 
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
-// Menu items.
-const items = [
+const menuItems = [
   {
     title: 'Home',
-    url: '/organizer',
+    url: '/organizer/home',
     icon: Home,
   },
   {
     title: 'Sports',
     url: '/organizer/sports',
-    icon: List,
+    icon: Trophy,
   },
-  // {
-  //   title: 'Add Event',
-  //   url: '/organizer/add-event',
-  //   icon: Calendar,
-  // },
-  // {
-  // 	title: 'Search',
-  // 	url: '/organizer/search',
-  // 	icon: Search,
-  // },
-  // {
-  // 	title: 'Inbox',
-  // 	url: '/organizer/inbox',
-  // 	icon: Inbox,
-  // },
   {
-    title: 'Settings',
-    url: '#',
-    icon: Settings,
+    title: 'News',
+    url: '/organizer/news',
+    icon: Newspaper,
+  },
+  {
+    title: 'Registration',
+    url: '/organizer/registration',
+    icon: UserPlus,
   },
 ];
 
-export function AppSidebar() {
-  const [open, setOpen] = useState(false);
+export const AppSidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+
+  const handleLogout = () => {
+    console.log('Logging out');
+    setIsLogoutDialogOpen(false);
+  };
+
   return (
-    <Sidebar>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+    <>
+      {/* Mobile/Desktop Toggle Button - Now hidden when sidebar is open */}
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className={`
+          fixed z-50 top-4 left-4 
+          bg-primary text-primary-foreground p-2 
+          rounded-md transition-all
+          ${isOpen ? 'hidden md:hidden' : 'block'}
+          md:block
+        `}
+      >
+        <Menu className="h-6 w-6" />
+      </button>
+
+      {/* Sidebar */}
+      <div 
+        className={`
+          fixed top-0 left-0 h-full bg-background border-r 
+          transition-all duration-300 ease-in-out z-40
+          ${isOpen ? 'w-64' : 'w-16'}
+          md:translate-x-0 
+          ${isOpen ? '-translate-x-0' : '-translate-x-full'}
+        `}
+      >
+        <div className="p-4 flex items-center justify-between h-16">
+          <h2 className={`text-xl font-bold ${!isOpen && 'hidden'}`}>
+            SUKAD-USM
+          </h2>
+          {isOpen && (
+            <button 
+              onClick={() => setIsOpen(false)}
+              className="hover:bg-accent p-1 rounded-md"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          )}
+        </div>
+
+        <nav className="px-4">
+          {menuItems.map((item) => (
+            <Link 
+              key={item.title} 
+              href={item.url}
+              className={`
+                flex items-center p-3 hover:bg-accent rounded-md 
+                transition-all group
+                ${!isOpen ? 'justify-center' : ''}
+              `}
+            >
+              <item.icon className="h-6 w-6 flex-shrink-0" />
+              <span 
+                className={`
+                  ${!isOpen ? 'hidden' : 'block'}
+                  group-hover:text-primary ml-3
+                `}
+              >
+                {item.title}
+              </span>
+            </Link>
+          ))}
+
+          <button 
+            onClick={() => setIsLogoutDialogOpen(true)}
+            className={`
+              flex items-center p-3 hover:bg-accent rounded-md 
+              transition-all group w-full
+              ${!isOpen ? 'justify-center' : ''}
+            `}
+          >
+            <Settings className="h-6 w-6 flex-shrink-0" />
+            <span 
+              className={`
+                ${!isOpen ? 'hidden' : 'block'}
+                group-hover:text-primary ml-3
+              `}
+            >
+              Settings
+            </span>
+          </button>
+        </nav>
+      </div>
+
+      {/* Content Wrapper */}
+      <div 
+        className={`
+          transition-all duration-300 ease-in-out
+          ${isOpen ? 'md:pl-64 pl-0' : 'md:pl-16 pl-0'}
+          pt-16 p-4
+        `}
+      >
+        {/* Your page content will go here */}
+      </div>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog 
+        open={isLogoutDialogOpen} 
+        onOpenChange={setIsLogoutDialogOpen}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Log Out</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to log out of the application?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button 
+              variant="destructive" 
+              onClick={handleLogout}
+            >
+              <LogOut className="mr-2 h-6 w-6" /> Log Out
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
-}
+};
+
+export default AppSidebar;
