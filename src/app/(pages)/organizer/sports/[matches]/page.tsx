@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -70,45 +70,52 @@ const SportConfigMap: { [key: string]: SportConfig } = {
 
 const EventPage = () => {
   const params = useParams();
-  console.log('console matches:', params.matches);
-  console.log('console sport:', params.sport);
+  const category = useSearchParams().get('category');
   const router = useRouter();
 
   const [sportType, setSportType] = useState('volleyball');
   const [sportConfig, setSportConfig] = useState<SportConfig | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    category || 'All Categories'
+  );
+  const [currentMatches, setCurrentMatches] = useState<any[]>([]);
+  const [upcomingMatches, setUpcomingMatches] = useState<any[]>([]);
+  const [pastMatches, setPastMatches] = useState<any[]>([]);
 
   //Tukar SINI
   useEffect(() => {
     const newSportType = params.matches
       ? (params.matches as string).toLowerCase()
       : 'volleyball';
-    
+
+    const newSportCategory = category ? category : 'All Categories';
+
     // Validate that the sport type exists in SportConfigMap
     const validSportType = Object.keys(SportConfigMap).includes(newSportType)
       ? newSportType
       : 'volleyball';
-    
+
     setSportType(validSportType);
+    setSelectedCategory(newSportCategory);
     setSportConfig(SportConfigMap[validSportType]);
   }, [params.matches]);
 
-  console.log('console SportType:', sportType);
-  console.log('console SportConfig:', sportConfig);
-
-  // const sportConfig = SportConfigMap[sportType];
-
-  const [selectedCategory, setSelectedCategory] =
-    useState<string>('All Categories');
-  const [currentMatches, setCurrentMatches] = useState<any[]>([]);
-  const [upcomingMatches, setUpcomingMatches] = useState<any[]>([]);
-  const [pastMatches, setPastMatches] = useState<any[]>([]);
+  // console.log('console selected', selectedCategory);
+  // console.log('console sportConfig', sportConfig);
 
   useEffect(() => {
+    console.log('console sportConfig', sportConfig);
+    console.log('console selectedCategory', selectedCategory);
     if (sportConfig) {
+      // console.log('console sportConfig inside if', sportConfig);
       const filterMatchesByCategory = (matches: any[]) => {
+        console.log('console matches', matches);
         if (selectedCategory === 'All Categories') return matches;
         return matches.filter((match) => match.category === selectedCategory);
       };
+
+      // console.log('console matches');
+      // console.log('console matches', sportConfig.matches);
 
       setCurrentMatches(
         filterMatchesByCategory(
@@ -128,6 +135,10 @@ const EventPage = () => {
     }
   }, [sportConfig, selectedCategory, params.sport]);
 
+  console.log('console currentMatches', currentMatches);
+  console.log('console upcomingMatches', upcomingMatches);
+  console.log('console pastMatches', pastMatches);
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ongoing':
@@ -142,11 +153,11 @@ const EventPage = () => {
   };
 
   const handleEdit = (match: any) => {
-    router.push(`/organizer/matches/${match.id}?type=${sportType}`);
+    router.push(`/organizer/sports/${sportType}/${match.id}?type=${sportType}`);
   };
 
   const handleCreateMatch = () => {
-    router.push('/organizer/matches/create');
+    router.push(`/organizer/sports/${sportType}/create`);
   };
 
   const MatchCard = ({ match }: { match: any }) => (

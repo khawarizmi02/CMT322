@@ -49,7 +49,7 @@ export const SportsListDetailsCopy: SportsListCopy[] = [
     categories: [
       {
         id: 'cat-001',
-        category: "Men's Single",
+        category: "Men's Singles",
         image:
           'https://images.unsplash.com/photo-1721760886493-61c47c1caec9?q=80&w=1887&auto=format&fit=crop',
         matches: [
@@ -80,7 +80,7 @@ export const SportsListDetailsCopy: SportsListCopy[] = [
       },
       {
         id: 'cat-002',
-        category: "Women's Single",
+        category: "Women's Singles",
         image:
           'https://images.unsplash.com/photo-1721760886493-61c47c1caec9?q=80&w=1887&auto=format&fit=crop',
         matches: [

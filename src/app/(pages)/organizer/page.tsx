@@ -1,4 +1,4 @@
-// // "use client";
+'use client';
 // // import { useState, useEffect } from "react";
 // import {
 //   query,
@@ -71,10 +71,12 @@ import { NewsDetails } from '@/data/mock-news';
 import { SportsListDetails } from '@/data/mock-sportslist';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import LeaderboardDesasiswa from '@/components/LeaderboardDesasiswa';
+import { useRouter } from 'next/navigation';
 
 const inter = Inter({ subsets: ['latin'] });
 
 const Home: React.FC = () => {
+  const router = useRouter();
   return (
     <div className={`${inter.className} grid grid-cols-1 max-w-full `}>
       {/* Announcement */}
@@ -198,6 +200,7 @@ const Home: React.FC = () => {
         <button
           title="SportsList"
           className="text-[#654321] flex flex-row gap-2 w-[160px]"
+          onClick={() => router.push('/organizer/sports')}
         >
           <h1 className="text-xl font-medium">Sports List!</h1>
           <div className="pt-1.5">
