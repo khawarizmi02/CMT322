@@ -26,7 +26,7 @@ import { Button } from '@/components/ui/button';
 const menuItems = [
   {
     title: 'Home',
-    url: '/organizer/home',
+    url: '/organizer',
     icon: Home,
   },
   {
