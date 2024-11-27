@@ -25,12 +25,12 @@ const Sports: React.FC = () => {
 
   const handleClick = (sport: string, category?: string) => {
     if (!category) {
-      router.push(`/organizer/sports/${sport.toLowerCase()}`);
+      router.push(`/guest/sports/${sport.toLowerCase()}`);
       return;
     }
 
     router.push(
-      `/organizer/sports/${sport.toLowerCase()}?category=${category}`
+      `/guest/sports/${sport.toLowerCase()}?category=${category}`
     );
   };
 
