@@ -2,24 +2,24 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { 
-  Home, 
-  Newspaper, 
-  Trophy, 
-  UserPlus, 
-  Settings, 
-  LogOut, 
-  Menu, 
-  X 
+import {
+  Home,
+  Newspaper,
+  Trophy,
+  UserPlus,
+  Settings,
+  LogOut,
+  Menu,
+  X,
 } from 'lucide-react';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogClose 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
@@ -58,23 +58,24 @@ export const AppSidebar = () => {
   return (
     <>
       {/* Mobile/Desktop Toggle Button - Now hidden when sidebar is open */}
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className={`
           fixed z-50 top-4 left-4 
-          bg-primary text-primary-foreground p-2 
+          text-primary-foreground 
           rounded-md transition-all
+					flex items-center justify-center
           ${isOpen ? 'hidden md:hidden' : 'block'}
           md:block
         `}
       >
-        <Menu className="h-6 w-6" />
+        <Menu className="h-8 w-8 text-black" />
       </button>
 
       {/* Sidebar */}
-      <div 
+      <div
         className={`
-          fixed top-0 left-0 h-full bg-background border-r 
+          fixed top-0 left-0 h-full bg-accent border-r 
           transition-all duration-300 ease-in-out z-40
           ${isOpen ? 'w-64' : 'w-16'}
           md:translate-x-0 
@@ -86,7 +87,7 @@ export const AppSidebar = () => {
             SUKAD-USM
           </h2>
           {isOpen && (
-            <button 
+            <button
               onClick={() => setIsOpen(false)}
               className="hover:bg-accent p-1 rounded-md"
             >
@@ -97,8 +98,8 @@ export const AppSidebar = () => {
 
         <nav className="px-4">
           {menuItems.map((item) => (
-            <Link 
-              key={item.title} 
+            <Link
+              key={item.title}
               href={item.url}
               className={`
                 flex items-center p-3 hover:bg-accent rounded-md 
@@ -107,10 +108,9 @@ export const AppSidebar = () => {
               `}
             >
               <item.icon className="h-6 w-6 flex-shrink-0" />
-              <span 
+              <span
                 className={`
-                  ${!isOpen ? 'hidden' : 'block'}
-                  group-hover:text-primary ml-3
+                  ${!isOpen ? 'hidden' : 'block'} ml-3
                 `}
               >
                 {item.title}
@@ -118,7 +118,7 @@ export const AppSidebar = () => {
             </Link>
           ))}
 
-          <button 
+          <button
             onClick={() => setIsLogoutDialogOpen(true)}
             className={`
               flex items-center p-3 hover:bg-accent rounded-md 
@@ -127,10 +127,9 @@ export const AppSidebar = () => {
             `}
           >
             <Settings className="h-6 w-6 flex-shrink-0" />
-            <span 
+            <span
               className={`
-                ${!isOpen ? 'hidden' : 'block'}
-                group-hover:text-primary ml-3
+                ${!isOpen ? 'hidden' : 'block'} ml-3
               `}
             >
               Settings
@@ -140,7 +139,7 @@ export const AppSidebar = () => {
       </div>
 
       {/* Content Wrapper */}
-      <div 
+      <div
         className={`
           transition-all duration-300 ease-in-out
           ${isOpen ? 'md:pl-64 pl-0' : 'md:pl-16 pl-0'}
@@ -151,10 +150,7 @@ export const AppSidebar = () => {
       </div>
 
       {/* Logout Confirmation Dialog */}
-      <Dialog 
-        open={isLogoutDialogOpen} 
-        onOpenChange={setIsLogoutDialogOpen}
-      >
+      <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Log Out</DialogTitle>
@@ -166,10 +162,7 @@ export const AppSidebar = () => {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button 
-              variant="destructive" 
-              onClick={handleLogout}
-            >
+            <Button variant="destructive" onClick={handleLogout}>
               <LogOut className="mr-2 h-6 w-6" /> Log Out
             </Button>
           </DialogFooter>
