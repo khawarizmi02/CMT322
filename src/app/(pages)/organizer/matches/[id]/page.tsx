@@ -1,22 +1,44 @@
-"use client"
+'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Save, User, Users, MapPin, Calendar, Clock, Trophy, Home } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import {
+  ArrowLeft,
+  Save,
+  User,
+  Users,
+  MapPin,
+  Calendar,
+  Clock,
+  Trophy,
+  Home,
+} from 'lucide-react';
 import { badmintonMatches, BadmintonMatchType } from '@/data/mock-badminton';
 import { volleyballMatches, VolleyballMatchType } from '@/data/mock-volleyball';
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 type MatchType = BadmintonMatchType | VolleyballMatchType;
 
-const EditMatchPage = ({ 
+const EditMatchPage = ({
   params,
   searchParams,
 }: {
@@ -41,8 +63,9 @@ const EditMatchPage = ({
   });
 
   useEffect(() => {
-    const matches = searchParams.type === 'badminton' ? badmintonMatches : volleyballMatches;
-    const foundMatch = matches.find(m => m.id === params.id);
+    const matches =
+      searchParams.type === 'badminton' ? badmintonMatches : volleyballMatches;
+    const foundMatch = matches.find((m) => m.id === params.id);
     if (foundMatch) {
       setMatch(foundMatch);
       setFormData({
@@ -63,22 +86,26 @@ const EditMatchPage = ({
   }, [params.id, searchParams.type]);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Here you would typically make an API call to update the match
     // For now, we'll just simulate the update
-    
+
     // If scores are added to a current match, update its status to completed
     if (match?.status === 'ongoing' && formData.scoreA && formData.scoreB) {
       // Update match status to completed
-      console.log('Match completed with scores:', formData.scoreA, formData.scoreB);
+      console.log(
+        'Match completed with scores:',
+        formData.scoreA,
+        formData.scoreB
+      );
     }
 
     router.push('/organizer/details');
@@ -129,44 +156,61 @@ const EditMatchPage = ({
 
         <Card className="border-muted/40 shadow-lg">
           <CardHeader className="space-y-2">
-            <CardTitle className="text-2xl font-bold">Edit Match Details</CardTitle>
+            <CardTitle className="text-2xl font-bold">
+              Edit Match Details
+            </CardTitle>
             <CardDescription>
-              Update match information and scores for {match.status === 'ongoing' ? 'the ongoing match' : 'this match'}
+              Update match information and scores for{' '}
+              {match.status === 'ongoing' ? 'the ongoing match' : 'this match'}
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="space-y-6">
                 {/* Players/Teams Section */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-lg font-semibold text-primary">
-                    {isBadminton ? <User className="h-5 w-5" /> : <Users className="h-5 w-5" />}
+                    {isBadminton ? (
+                      <User className="h-5 w-5" />
+                    ) : (
+                      <Users className="h-5 w-5" />
+                    )}
                     <h3>{isBadminton ? 'Players' : 'Teams'}</h3>
                   </div>
                   <Separator className="my-4" />
-                  
+
                   {isBadminton ? (
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="playerA" className="text-sm font-medium">
+                        <Label
+                          htmlFor="playerA"
+                          className="text-sm font-medium"
+                        >
                           Player A
                         </Label>
                         <Input
                           id="playerA"
                           value={formData.playerA}
-                          onChange={(e) => handleInputChange('playerA', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange('playerA', e.target.value)
+                          }
                           className="bg-background/50 focus:bg-background"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="playerB" className="text-sm font-medium">
+                        <Label
+                          htmlFor="playerB"
+                          className="text-sm font-medium"
+                        >
                           Player B
                         </Label>
                         <Input
                           id="playerB"
                           value={formData.playerB}
-                          onChange={(e) => handleInputChange('playerB', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange('playerB', e.target.value)
+                          }
                           className="bg-background/50 focus:bg-background"
                         />
                       </div>
@@ -180,7 +224,9 @@ const EditMatchPage = ({
                         <Input
                           id="teamA"
                           value={formData.teamA}
-                          onChange={(e) => handleInputChange('teamA', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange('teamA', e.target.value)
+                          }
                           className="bg-background/50 focus:bg-background"
                         />
                       </div>
@@ -191,7 +237,9 @@ const EditMatchPage = ({
                         <Input
                           id="teamB"
                           value={formData.teamB}
-                          onChange={(e) => handleInputChange('teamB', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange('teamB', e.target.value)
+                          }
                           className="bg-background/50 focus:bg-background"
                         />
                       </div>
@@ -206,27 +254,37 @@ const EditMatchPage = ({
                     <h3>Desasiswa</h3>
                   </div>
                   <Separator className="my-4" />
-                  
+
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="desasiswaA" className="text-sm font-medium">
+                      <Label
+                        htmlFor="desasiswaA"
+                        className="text-sm font-medium"
+                      >
                         Desasiswa A
                       </Label>
                       <Input
                         id="desasiswaA"
                         value={formData.desasiswaA}
-                        onChange={(e) => handleInputChange('desasiswaA', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange('desasiswaA', e.target.value)
+                        }
                         className="bg-background/50 focus:bg-background"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="desasiswaB" className="text-sm font-medium">
+                      <Label
+                        htmlFor="desasiswaB"
+                        className="text-sm font-medium"
+                      >
                         Desasiswa B
                       </Label>
                       <Input
                         id="desasiswaB"
                         value={formData.desasiswaB}
-                        onChange={(e) => handleInputChange('desasiswaB', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange('desasiswaB', e.target.value)
+                        }
                         className="bg-background/50 focus:bg-background"
                       />
                     </div>
@@ -240,7 +298,7 @@ const EditMatchPage = ({
                     <h3>Match Details</h3>
                   </div>
                   <Separator className="my-4" />
-                  
+
                   <div className="grid grid-cols-3 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="date" className="text-sm font-medium">
@@ -252,7 +310,9 @@ const EditMatchPage = ({
                           id="date"
                           type="date"
                           value={formData.date}
-                          onChange={(e) => handleInputChange('date', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange('date', e.target.value)
+                          }
                           className="pl-10 bg-background/50 focus:bg-background"
                         />
                       </div>
@@ -267,7 +327,9 @@ const EditMatchPage = ({
                           id="time"
                           type="time"
                           value={formData.time}
-                          onChange={(e) => handleInputChange('time', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange('time', e.target.value)
+                          }
                           className="pl-10 bg-background/50 focus:bg-background"
                         />
                       </div>
@@ -281,7 +343,9 @@ const EditMatchPage = ({
                         <Input
                           id="venue"
                           value={formData.venue}
-                          onChange={(e) => handleInputChange('venue', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange('venue', e.target.value)
+                          }
                           className="pl-10 bg-background/50 focus:bg-background"
                         />
                       </div>
@@ -297,7 +361,7 @@ const EditMatchPage = ({
                       <h3>Match Score</h3>
                     </div>
                     <Separator className="my-4" />
-                    
+
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <Label htmlFor="scoreA" className="text-sm font-medium">
@@ -307,7 +371,9 @@ const EditMatchPage = ({
                           id="scoreA"
                           type="number"
                           value={formData.scoreA}
-                          onChange={(e) => handleInputChange('scoreA', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange('scoreA', e.target.value)
+                          }
                           className="bg-background/50 focus:bg-background"
                           min="0"
                         />
@@ -320,7 +386,9 @@ const EditMatchPage = ({
                           id="scoreB"
                           type="number"
                           value={formData.scoreB}
-                          onChange={(e) => handleInputChange('scoreB', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange('scoreB', e.target.value)
+                          }
                           className="bg-background/50 focus:bg-background"
                           min="0"
                         />
@@ -339,7 +407,7 @@ const EditMatchPage = ({
                 >
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   type="submit"
                   className="bg-primary hover:bg-primary/90"
                 >

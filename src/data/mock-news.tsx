@@ -45,11 +45,11 @@ export const NewsDetails: NewsContent[] = [
 export const newsArticles = [
   {
     id: 1,
-    title: 'Breaking Tech Innovations',
+    title: 'Desasiswa Restu Meraih Emas!',
     description:
-      'Explore the latest groundbreaking technologies transforming our world.',
+      'Pasukan bola sepak bagi Desasiswa Restu telah berjaya meraih emas dalam kejohanan bola sepak antara desasiswa.',
     date: 'November 25, 2024',
-    tags: ['Football', 'Men Single'],
+    tags: ['Football'],
     imageUrl:
       'https://img.chelseafc.com/image/upload/f_auto,w_1440,c_fill,g_faces,q_90/editorial/match-reports/2024-25/Newcastle%20A%20Carabao%20Cup/chelsea-team-newcastle-301024.jpg',
   },
@@ -82,5 +82,24 @@ export const newsArticles = [
     tags: ['Football', 'Healthcare'],
     imageUrl:
       'https://news.usm.my/images/phocafavicon/0B81F65F-2BD9-4CD4-85AD-4BC8D5D21C7D.jpeg',
+  },
+  {
+    id: 5,
+    title: 'AI Advances in Healthcare',
+    description:
+      'How artificial intelligence is revolutionizing medical diagnostics and treatment.',
+    date: 'November 15, 2024',
+    tags: ['Football', 'Healthcare'],
+    imageUrl: 'https://pusatsukan.usm.my/images/PBJ_2024_1.jpg',
+  },
+  {
+    id: 6,
+    title: 'AI Advances in Healthcare',
+    description:
+      'How artificial intelligence is revolutionizing medical diagnostics and treatment.',
+    date: 'November 15, 2024',
+    tags: ['Football', 'Healthcare'],
+    imageUrl:
+      'https://www.pocketnews.com.my/wp-content/uploads/2018/12/45th-Pesta-Hoki-USM-Penang-International-Champion-Premier-League.jpg',
   },
 ];
