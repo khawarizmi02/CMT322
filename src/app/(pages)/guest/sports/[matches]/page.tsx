@@ -141,14 +141,6 @@ const EventPage = () => {
     }
   };
 
-  const handleEdit = (match: any) => {
-    router.push(`/organizer/matches/${match.id}?type=${sportType}`);
-  };
-
-  const handleCreateMatch = () => {
-    router.push('/organizer/matches/create');
-  };
-
   const MatchCard = ({ match }: { match: any }) => (
     <Card className="mb-4 hover:shadow-lg transition-shadow duration-200">
       <CardContent className="pt-6">
@@ -163,14 +155,6 @@ const EventPage = () => {
                   className={`w-2 h-2 rounded-full ${getStatusColor(match.status)}`}
                 />
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0"
-                onClick={() => handleEdit(match)}
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
             </div>
 
             <div className="space-y-2">
@@ -235,16 +219,6 @@ const EventPage = () => {
             <p className="text-muted-foreground">
               Track all matches and results
             </p>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Button
-              onClick={handleCreateMatch}
-              variant="default"
-              className="gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              Create Match
-            </Button>
           </div>
         </div>
 
