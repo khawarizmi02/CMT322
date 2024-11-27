@@ -1,178 +1,6 @@
-// 'use client';
-// import React, { useState } from 'react';
-
-// interface RegistrantData {
-//   sport: string;
-//   desasiswa: string;
-//   name: string;
-//   matricNumber: string;
-//   school: string;
-// }
-
-// const RegistrationPage: React.FC = () => {
-//   const [registrants, setRegistrants] = useState<RegistrantData[]>([
-//     { sport: '', desasiswa: '', name: '', matricNumber: '', school: '' },
-//   ]);
-
-//   const handleAddRegistrant = () => {
-//     setRegistrants([
-//       ...registrants,
-//       { sport: '', desasiswa: '', name: '', matricNumber: '', school: '' },
-//     ]);
-//   };
-
-//   const handleRemoveRegistrant = (index: number) => {
-//     const updatedRegistrants = [...registrants];
-//     updatedRegistrants.splice(index, 1);
-//     setRegistrants(updatedRegistrants);
-//   };
-
-//   const handleInputChange = (
-//     index: number,
-//     field: keyof RegistrantData,
-//     value: string
-//   ) => {
-//     const updatedRegistrants = [...registrants];
-//     updatedRegistrants[index][field] = value;
-//     setRegistrants(updatedRegistrants);
-//   };
-
-//   const handleSubmit = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     console.log('Registrants:', registrants);
-//     // You can add the logic to submit the form data here
-//   };
-
-//   return (
-//     <div className="container mx-auto py-8">
-//       <h1 className="text-3xl font-bold mb-4">REGISTER PARTICIPANT</h1>
-//       <form onSubmit={handleSubmit}>
-//         {registrants.map((registrant, index) => (
-//           <div
-//             key={index}
-//             className="bg-gray-100 p-4 rounded-md mb-4 border border-gray-200"
-//           >
-//             <h2 className="text-xl font-bold mb-2">Registrant {index + 1}</h2>
-//             <div className="grid grid-cols-2 gap-4">
-//               <div>
-//                 <label htmlFor={`sport-${index}`} className="block font-medium mb-2">
-//                   Event
-//                 </label>
-//                 <select
-//                   id={`sport-${index}`}
-//                   value={registrant.sport}
-//                   onChange={(e) =>
-//                     handleInputChange(index, 'sport', e.target.value)
-//                   }
-//                   className="block w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-//                 >
-//                   <option value="">Select an event</option>
-//                   <option value="football">Football</option>
-//                   <option value="netball">Netball</option>
-//                   <option value="badminton">Badminton</option>
-//                   <option value="futsal">Futsal</option>
-//                   <option value="volleyball">Volleyball</option>
-//                   <option value="petanque">Petanque</option>
-//                 </select>
-//               </div>
-//               <div>
-//                 <label htmlFor={`desasiswa-${index}`} className="block font-medium mb-2">
-//                   Desasiswa
-//                 </label>
-//                 <select
-//                   id={`desasiswa-${index}`}
-//                   value={registrant.desasiswa}
-//                   onChange={(e) =>
-//                     handleInputChange(index, 'desasiswa', e.target.value)
-//                   }
-//                   className="block w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-//                 >
-//                   <option value="">Select a desasiswa</option>
-//                   <option value="Desasiswa Tekun">Desasiswa Tekun</option>
-//                   <option value="Desasiswa Restu">Desasiswa Restu</option>
-//                   <option value="Desasiswa Saujana">Desasiswa Saujana</option>
-//                   <option value="Desasiswa Indah Kembara">Desasiswa Indah Kembara</option>
-//                   <option value="Desasiswa Aman Damai">Desasiswa Aman Damai</option>
-//                 </select>
-//               </div>
-//               <div>
-//                 <label htmlFor={`name-${index}`} className="block font-medium mb-2">
-//                   Name
-//                 </label>
-//                 <input
-//                   id={`name-${index}`}
-//                   type="text"
-//                   value={registrant.name}
-//                   onChange={(e) =>
-//                     handleInputChange(index, 'name', e.target.value)
-//                   }
-//                   className="block w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-//                 />
-//               </div>
-//               <div>
-//                 <label htmlFor={`matricNumber-${index}`} className="block font-medium mb-2">
-//                   Matric Number
-//                 </label>
-//                 <input
-//                   id={`matricNumber-${index}`}
-//                   type="text"
-//                   value={registrant.matricNumber}
-//                   onChange={(e) =>
-//                     handleInputChange(index, 'matricNumber', e.target.value)
-//                   }
-//                   className="block w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-//                 />
-//               </div>
-//               <div>
-//                 <label htmlFor={`school-${index}`} className="block font-medium mb-2">
-//                   School
-//                 </label>
-//                 <input
-//                   id={`school-${index}`}
-//                   type="text"
-//                   value={registrant.school}
-//                   onChange={(e) =>
-//                     handleInputChange(index, 'school', e.target.value)
-//                   }
-//                   className="block w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-//                 />
-//               </div>
-//             </div>
-//             <button
-//               type="button"
-//               onClick={() => handleRemoveRegistrant(index)}
-//               className="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
-//             >
-//               Remove Registrant
-//             </button>
-//           </div>
-//         ))}
-//         <button
-//           type="button"
-//           onClick={handleAddRegistrant}
-//           className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-md"
-//         >
-//           Add Registrant
-//         </button>
-//         <button
-//           type="submit"
-//           className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-md ml-4"
-//         >
-//           Submit
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default RegistrationPage;
-
-
-
-
 'use client';
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -180,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useFieldArray } from "react-hook-form";
 import * as z from "zod";
+import { CirclePlus, User } from 'lucide-react';
 
 // Zod schema for form validation
 const registrantSchema = z.object({
@@ -218,11 +47,25 @@ const RegistrationPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <Card className='bg-transparent'>
-        <CardHeader>
-          <CardTitle className="text-3xl">REGISTER PARTICIPANT</CardTitle>
-        </CardHeader>
+    <div className="container mx-auto py-8 min-w-[680px]">
+      <div className="flex items-center gap-4 mb-8">
+          <User className="h-8 w-8 text-primary" />
+          <div>
+            <h1 className="text-4xl font-bold tracking-tight">Register Participant</h1>
+            <p className="text-muted-foreground mt-1">Register new participants for SUKAD tournament</p>
+          </div>
+        </div>
+        
+      <Card className='bg-white'>
+      <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <CirclePlus className="h-6 w-6" />
+              Registration Form
+            </CardTitle>
+            <CardDescription>
+            Fill in the details below to register participants for the selected sports event
+            </CardDescription>
+          </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
