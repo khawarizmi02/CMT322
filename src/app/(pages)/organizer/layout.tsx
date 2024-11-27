@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main>
+      <main className='w-full'>
         <SidebarTrigger />
         <ScrollArea className="h-[1000px]">{children}</ScrollArea>
       </main>
