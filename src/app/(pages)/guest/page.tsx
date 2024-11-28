@@ -38,22 +38,15 @@ const GuestHome: React.FC = () => {
       {/* Announcement */}
       {/* <div className="bg-gray-100 p-4 w-full h-96 flex">
         <div className="w-1/2 p-4">
-          <h1 className="text-3xl font-bold">Announcement Topic</h1>
-          <h2 className="text-lg font-bold">Announcement Sub Topic</h2>
+          <h1 className="text-3xl font-bold">WELCOME TO SUKAD PHASE 1</h1>
+          <h2 className="text-lg font-bold">Be Ready!!</h2>
           <p className="justify-text">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam
-            suscipit tempor nisi, eget tempor ante. Aliquam erat volutpat.
-            Aliquam tristique, purus eu sodales volutpat, purus odio ullamcorper
-            nisl, vel pulvinar diam erat vel purus. Nunc vel aliquam lectus.
-            Cras commodo dolor ac nibh scelerisque porta. Phasellus vitae velit
-            non nibh aliquam mollis in non massa. Nunc id suscipit mauris. Nulla
-            facilisi. Donec ornare, nulla in gravida molestie, ligula massa
-            posuere mi, nec tempor sapien erat in elit. Cras molestie a ligula
-            aliquet tempor. Vestibulum ante ipsum primis in faucibus orci luctus
-            et ultrices posuere cubilia curae; Morbi vel nisi id sem condimentum
-            sollicitudin et eget mi. Integer ac sollicitudin turpis. Ut
-            condimentum neque vitae tellus pretium consectetur. Curabitur tempus
-            tellus quis luctus consectetur.
+          We’re thrilled to introduce the ultimate platform for all SUKAD-related activities. 
+          This system is designed to enhance your experience by providing seamless event registration, real-time updates, and 
+          comprehensive event management. Stay informed with detailed schedules, important notifications, and live score tracking,
+           all in one place. You can also access the latest news, updates, and announcements to ensure you never miss out on any 
+           exciting moments. Let’s make SUKAD 2024 an unforgettable event filled with fun, competition, and sportsmanship. 
+           Join us and be part of this incredible journey!
           </p>
         </div>
         <div className="w-1/3 flex justify-center items-center">
