@@ -81,7 +81,7 @@ const CreateNewsPage = () => {
       console.log('News Article Submitted:', newsData);
 
       // Redirect to news page after successful submission
-      router.push('/news');
+      router.push('/organizer/news');
     } catch (error) {
       console.error('Submission error:', error);
       // Handle error (e.g., show error toast)
