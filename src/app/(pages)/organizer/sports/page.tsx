@@ -1,21 +1,15 @@
-//SHow all sports
 'use client';
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-import { SportsListDetails } from '@/data/mock-sportslist';
-import {
-  SportsListDetailsCopy,
-  SportsListCopy,
-} from '@/data/mock-sportslist-copy';
-import { FaArrowRight } from 'react-icons/fa';
+import { SportsListDetailsCopy } from '@/data/mock-sportslist-copy';
+import { FaArrowRight, FaPlus, FaPlusCircle } from 'react-icons/fa';
 import Image from 'next/image';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardContent,
 } from '@/components/ui/card';
 import { AspectRatio } from '@radix-ui/react-aspect-ratio';
@@ -34,12 +28,36 @@ const Sports: React.FC = () => {
     );
   };
 
+  const handleCreateSport = () => {
+    router.push('/organizer/sports/addsports');
+  };
+
+  const handleAddSportsCategory = () => {
+    router.push('/organizer/sports/addsportscategory');
+  };
+
   const sport_list_string = SportsListDetailsCopy.map(
     (sport) => sport.title
   ).join(', ');
 
   return (
     <div className="px-4">
+      {/* Action Buttons */}
+      <div className="flex justify-end gap-4 mb-4">
+        <button 
+          onClick={handleCreateSport} 
+          className="flex items-center gap-2 px-4 py-2 border border-[#654321] text-[#654321] hover:bg-[#654321] hover:text-white transition-colors duration-300 rounded-md text-sm font-medium"
+        >
+          <FaPlus /> Create Sport
+        </button>
+        <button 
+          onClick={handleAddSportsCategory} 
+          className="flex items-center gap-2 px-4 py-2 border border-[#654321] text-[#654321] hover:bg-[#654321] hover:text-white transition-colors duration-300 rounded-md text-sm font-medium"
+        >
+          <FaPlusCircle /> Add Sports Category
+        </button>
+      </div>
+
       <section className="bg-gray-100 shadow-md rounded-lg p-6 m-8">
         <h1 className="text-3xl font-bold mb-4">SUKAD Event Sports List</h1>
         <p className="text-lg mb-4">
@@ -54,8 +72,9 @@ const Sports: React.FC = () => {
           on all the action.
         </p>
       </section>
+      
       {SportsListDetailsCopy.map((sport) => (
-        <div>
+        <div key={sport.title}>
           <div className="px-4 pt-4">
             <button
               title="SportsList"
@@ -73,7 +92,8 @@ const Sports: React.FC = () => {
               <div className="flex gap-4">
                 {sport.categories?.map((category) => (
                   <div
-                    className="w-[200px] h-[150px]"
+                    key={category.category}
+                    className="w-[200px] h-[150px] cursor-pointer"
                     onClick={() => handleClick(sport.title, category.category)}
                   >
                     <Card className="w-full h-full flex flex-col">
@@ -107,12 +127,3 @@ const Sports: React.FC = () => {
 };
 
 export default Sports;
-
-// <div key={sport.id} onClick={() => handleClick(sport.title)}>
-//   {sport.categories?.map((category) => (
-//     <div>
-//       {/* <img src={category.image} alt={sport.title} /> */}
-//       <div>{category.category}</div>
-//     </div>
-//   ))}
-// </div>
