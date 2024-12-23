@@ -1,4 +1,5 @@
 import { auth } from '@/firebase/firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 export class Fireauth{
 
@@ -28,12 +29,14 @@ export class Fireauth{
     async signInWithGoogle() {
         try {
             const provider = new GoogleAuthProvider();
+            console.log(provider);
             const userCredential = await signInWithPopup(auth, provider);
             const credential = GoogleAuthProvider.credentialFromResult(userCredential);
             const token = credential.accessToken; //Use for google api calls???
             const user = userCredential.user;
             console.log(user);
         } catch (error) {
+            console.log(error);
             throw error;
         }
     }

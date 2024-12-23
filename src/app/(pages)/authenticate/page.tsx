@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import fireauth from '@/firebase/services/fireauth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,7 +26,8 @@ const LoginPage: React.FC = () => {
         e.preventDefault();
         try {
             await fireauth.signIn(email, password);
-            router.push('/dashboard');
+            console.log('Sign In Successful');
+            //router.push('/dashboard');
         } catch (error) {
             setError('Failed to sign in. Please check your credentials.');
         }
@@ -35,7 +36,8 @@ const LoginPage: React.FC = () => {
     const handleGoogleSignIn = async () => {
         try {
             await fireauth.signInWithGoogle();
-            router.push('/dashboard');
+            console.log('Google Sign In Successful');
+            //router.push('/dashboard');
         } catch (error) {
             setError('Failed to sign in with Google.');
         }
