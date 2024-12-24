@@ -22,7 +22,10 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`antialiased`}>
+      <head>
+        <title>{String(metadata.title) ?? "Default Title"}</title>
+      </head>
+      <body className="antialiased">
         <main className="flex flex-col items-center">{children}</main>
       </body>
     </html>
