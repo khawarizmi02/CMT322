@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import {
   Home,
@@ -51,6 +51,8 @@ export const AppSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
+  const { user } = useUser();
+
   const handleLogout = () => {
     console.log('Logging out');
     setIsLogoutDialogOpen(false);
@@ -76,14 +78,15 @@ export const AppSidebar = () => {
       {/* Sidebar */}
       <div
         className={`
-          fixed top-0 left-0 h-full bg-accent border-r 
+          fixed top-0 left-0 h-full bg-white border-r-2
           transition-all duration-300 ease-in-out z-40
+					border-solid
           ${isOpen ? 'w-64' : 'w-16'}
           md:translate-x-0 
           ${isOpen ? '-translate-x-0' : '-translate-x-full'}
         `}
       >
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-around h-16">
           <h2 className={`text-xl font-bold ${!isOpen && 'hidden'}`}>
             SUKAD-USM
           </h2>
@@ -97,11 +100,19 @@ export const AppSidebar = () => {
           )}
         </div>
 
-				{/* Sidebar Navigation */}
+        {/* Sidebar Navigation */}
 
         <nav className="px-4">
-
-					<UserButton />
+          <div className="flex items-center justify-center p-3">
+            <UserButton />
+          </div>
+          {isOpen && (
+            <div className="flex items-center justify-center p-3">
+              <span className="text-sm text-gray-600">
+                {user?.emailAddresses[0].emailAddress}
+              </span>
+            </div>
+          )}
           {menuItems.map((item) => (
             <Link
               key={item.title}

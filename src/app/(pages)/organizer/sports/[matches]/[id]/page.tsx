@@ -16,13 +16,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type MatchType = BadmintonMatchType | VolleyballMatchType;
 
-const EditMatchPage = ({ 
-  params,
-  searchParams,
-}: {
+interface PageProps {
   params: { id: string };
   searchParams: { type: string };
-}) => {
+}
+
+const EditMatchPage = ({ params, searchParams }: PageProps) => {
   const router = useRouter();
   const [match, setMatch] = useState<MatchType | null>(null);
   const [loading, setLoading] = useState(true);
