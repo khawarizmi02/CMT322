@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import {
   Home,
@@ -96,7 +97,11 @@ export const AppSidebar = () => {
           )}
         </div>
 
+				{/* Sidebar Navigation */}
+
         <nav className="px-4">
+
+					<UserButton />
           {menuItems.map((item) => (
             <Link
               key={item.title}
