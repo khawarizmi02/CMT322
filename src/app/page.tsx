@@ -39,6 +39,7 @@
 //   );
 // }
 
+'use client'
 import React from 'react';
 import { Inter } from 'next/font/google';
 import {
@@ -51,6 +52,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { SignInButton, useAuth } from '@clerk/nextjs';
 import {
   Card,
   CardContent,
@@ -75,10 +77,25 @@ import LeaderboardDesasiswa from '@/components/LeaderboardDesasiswa';
 const inter = Inter({ subsets: ['latin'] });
 
 const Home: React.FC = () => {
+
+	const { isSignedIn } = useAuth();
+
+	//   // Get the userId from auth() -- if null, the user is not signed in
+  // const { userId } = await auth()
+
+  // if (userId) {
+  //   // Query DB for user specific information or display assets only to signed in users
+  // }
+
+  // // Get the Backend API User object when you need access to the user's information
+  // const user = await currentUser()
+  // // Use `user` to render user details or create UI elements
+
   return (
-    <div className={`${inter.className} grid grid-cols-1 max-w-full `}>
+    <div className={`${inter.className} grid grid-cols-12 items-center gap-15 max-w-[85%]`}>
+			{ !isSignedIn ? <SignInButton /> : null }
       {/* Announcement */}
-      <div className="bg-gray-100 p-4 w-screen h-96 flex">
+      <div className="col-span-full bg-gray-100 p-4 w-screen h-96 flex">
         <div className="w-1/2 p-4">
           <h1 className="text-3xl font-bold">Announcement Topic</h1>
           <h2 className="text-lg font-bold">Announcement Sub Topic</h2>
