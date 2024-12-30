@@ -21,7 +21,7 @@ export default async function AdminDashboard() {
       id: email.id,
       emailAddress: email.emailAddress,
     })),
-    primaryEmailAddressId: user.primaryEmailAddressId,
+    primaryEmailAddressId: user.primaryEmailAddressId || '',
     publicMetadata: user.publicMetadata,
   }))
 

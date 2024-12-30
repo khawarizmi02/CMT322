@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -8,28 +8,40 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { removeRole, setRole } from './_actions'
-
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { removeRole, setRole } from './_actions';
 
 export function AdminTable({ initialUsers }: { initialUsers: User[] }) {
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState('');
 
   const filteredUsers = initialUsers.filter((user) => {
     const email = user.emailAddresses.find(
       (email) => email.id === user.primaryEmailAddressId
-    )?.emailAddress
-    return email?.toLowerCase().includes(searchQuery.toLowerCase())
-  })
+    )?.emailAddress;
+    return email?.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  const handleSetRole = async (e: React.FormEvent<HTMLFormElement>, role: string) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    formData.set('role', role);
+    await setRole(formData);
+  };
+
+  const handleRemoveRole = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    await removeRole(formData);
+  };
 
   return (
     <Card className="w-full">
@@ -61,7 +73,7 @@ export function AdminTable({ initialUsers }: { initialUsers: User[] }) {
             {filteredUsers.map((user) => {
               const email = user.emailAddresses.find(
                 (email) => email.id === user.primaryEmailAddressId
-              )?.emailAddress
+              )?.emailAddress;
 
               return (
                 <TableRow key={user.id}>
@@ -69,9 +81,8 @@ export function AdminTable({ initialUsers }: { initialUsers: User[] }) {
                   <TableCell>{user.publicMetadata.role as string}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <form action={setRole} className={`${user.publicMetadata.role === 'admin' ? 'hidden' : ''}`}>
+                      <form onSubmit={(e) => handleSetRole(e, 'admin')} className={`${user.publicMetadata.role === 'admin' ? 'hidden' : ''}`}>
                         <input type="hidden" value={user.id} name="id" />
-                        <input type="hidden" value="admin" name="role" />
                         <Button 
                           type="submit" 
                           variant="outline" 
@@ -81,9 +92,8 @@ export function AdminTable({ initialUsers }: { initialUsers: User[] }) {
                         </Button>
                       </form>
 
-                      <form action={setRole} className={`${user.publicMetadata.role === 'member' ? 'hidden' : ''}`}>
+                      <form onSubmit={(e) => handleSetRole(e, 'member')} className={`${user.publicMetadata.role === 'member' ? 'hidden' : ''}`}>
                         <input type="hidden" value={user.id} name="id" />
-                        <input type="hidden" value="member" name="role" />
                         <Button 
                           type="submit" 
                           variant="outline" 
@@ -93,7 +103,7 @@ export function AdminTable({ initialUsers }: { initialUsers: User[] }) {
                         </Button>
                       </form>
 
-                      <form action={removeRole}>
+                      <form onSubmit={handleRemoveRole}>
                         <input type="hidden" value={user.id} name="id" />
                         <Button 
                           type="submit" 
@@ -106,23 +116,23 @@ export function AdminTable({ initialUsers }: { initialUsers: User[] }) {
                     </div>
                   </TableCell>
                 </TableRow>
-              )
+              );
             })}
           </TableBody>
         </Table>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 type User = {
-  id: string
+  id: string;
   emailAddresses: Array<{
-    id: string
-    emailAddress: string
-  }>
-  primaryEmailAddressId: string
+    id: string;
+    emailAddress: string;
+  }>;
+  primaryEmailAddressId: string;
   publicMetadata: {
-    role?: string
-  }
-}
+    role?: string;
+  };
+};
