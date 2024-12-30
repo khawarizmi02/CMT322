@@ -38,8 +38,10 @@ const EditMatchPage = ({ params, searchParams }: PageProps) => {
     scoreA: '',
     scoreB: '',
   });
+	const [isBadminton, setIsBadminton] = useState('badminton');
 
   useEffect(() => {
+		setIsBadminton(searchParams.type)
     const matches = searchParams.type === 'badminton' ? badmintonMatches : volleyballMatches;
     const foundMatch = matches.find(m => m.id === params.id);
     if (foundMatch) {
@@ -106,8 +108,6 @@ const EditMatchPage = ({ params, searchParams }: PageProps) => {
       </div>
     );
   }
-
-  const isBadminton = searchParams.type === 'badminton';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 p-6">
