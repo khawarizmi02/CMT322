@@ -2,6 +2,7 @@ import { TableCell } from '../ui/table';
 import { BadmintonLeaderboardType } from '@/data/mock-badminton';
 import { VolleyballLeaderboardType } from '@/data/mock-volleyball';
 import { LeaderboardDataType } from '../Leaderboard';
+import { JSX } from 'react';
 
 // Define a configuration object for each sport
 const leaderboardConfig: {
