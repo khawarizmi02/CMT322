@@ -25,6 +25,8 @@ const db = getFirestore(app)
 // Connect to Firebase auth
 const auth = getAuth(app)
 
+export { db };
+
 // Remove this if you do not have Firestore set up
 // for your Firebase app
 const getFirestoreData = async () => {
