@@ -1,44 +1,3 @@
-// // "use client";
-// // import { useState, useEffect } from "react";
-// import {
-//   query,
-//   collection,
-//   getDoc,
-//   QuerySnapshot,
-//   doc,
-//   getDocs,
-// } from "firebase/firestore";
-
-// import Image from "next/image";
-// import { db } from "@/firebase/firebase";
-// // import { set } from "date-fns";
-
-// export default function Home() {
-//   // const [data, setData] = useState<any[]>([]);
-//   // useEffect(() => {
-//   //   const fetchDocs = async () => {
-//   //     const q = query(collection(db, "User"));
-//   //     const querySnapshot = await getDocs(q);
-//   //     querySnapshot.forEach((doc) => {
-//   //       console.log(doc.id, " => ", doc.data());
-//   //       setData((prevData) => [...prevData, doc.data()]);
-//   //     });
-//   //   };
-//   //   fetchDocs();
-//   // }, []);
-
-//   return (
-//     <div className="flex flex-col items-center">
-//       <div>Hello</div>
-//       {/* <div>
-//         {data.map((item) => (
-//           <div>{item.email}</div>
-//         ))}
-//       </div> */}
-//     </div>
-//   );
-// }
-
 'use client'
 import React from 'react';
 import { Inter } from 'next/font/google';
@@ -80,20 +39,17 @@ const Home: React.FC = () => {
 
 	const { isSignedIn } = useAuth();
 
-	//   // Get the userId from auth() -- if null, the user is not signed in
-  // const { userId } = await auth()
-
-  // if (userId) {
-  //   // Query DB for user specific information or display assets only to signed in users
-  // }
-
-  // // Get the Backend API User object when you need access to the user's information
-  // const user = await currentUser()
-  // // Use `user` to render user details or create UI elements
-
   return (
     <div className={`${inter.className} grid grid-cols-12 items-center gap-15 max-w-[90%]`}>
-			{ !isSignedIn ? <SignInButton /> : null }
+			{!isSignedIn ? (
+        <div className="col-span-full flex justify-end p-4">
+          <SignInButton>
+            <button className="bg-[#654321] hover:bg-[#8B5E3C] text-white px-6 py-2 rounded-md transition-colors duration-200 flex items-center gap-2 font-medium">
+              Sign In
+            </button>
+          </SignInButton>
+        </div>
+      ) : null}
       {/* Announcement */}
       <div className="col-span-full bg-white p-4 w-full h-fill flex">
         <div className="w-1/2 p-4">
