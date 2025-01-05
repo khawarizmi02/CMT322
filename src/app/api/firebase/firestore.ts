@@ -18,8 +18,14 @@ export class Firestore{
         const sports: sports[] = [];
         const querySnapshot = await getDocs(collection(db, "sports"));
         querySnapshot.forEach((doc) => {
-            sports.push(doc.data() as sports);
+            sports.push({
+                sportID: doc.id,
+                sportName: doc.data().sportName,
+                sportCategory: doc.data().sportCategory,
+                phase: doc.data().phase
+            });
         });
+        console.log(sports);
         return sports;
     }
 }
