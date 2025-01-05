@@ -38,4 +38,5 @@ export type sports = {
     sportName: string;
     sportCategory: string;
     sportImage: string;
+    phase: number;
 }
