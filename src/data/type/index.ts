@@ -1,5 +1,9 @@
 //Type definition for the data type
 
+//Assume that the sport list is already pre determined before the event.
+//User just need to register the sport for what phase only.
+//User can't add new sport to the list without admin help etc.
+
 export const SPORTS_LIST = [
     'Badminton',
     'Track',
