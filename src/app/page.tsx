@@ -1,44 +1,4 @@
-// // "use client";
-// // import { useState, useEffect } from "react";
-// import {
-//   query,
-//   collection,
-//   getDoc,
-//   QuerySnapshot,
-//   doc,
-//   getDocs,
-// } from "firebase/firestore";
-
-// import Image from "next/image";
-// import { db } from "@/firebase/firebase";
-// // import { set } from "date-fns";
-
-// export default function Home() {
-//   // const [data, setData] = useState<any[]>([]);
-//   // useEffect(() => {
-//   //   const fetchDocs = async () => {
-//   //     const q = query(collection(db, "User"));
-//   //     const querySnapshot = await getDocs(q);
-//   //     querySnapshot.forEach((doc) => {
-//   //       console.log(doc.id, " => ", doc.data());
-//   //       setData((prevData) => [...prevData, doc.data()]);
-//   //     });
-//   //   };
-//   //   fetchDocs();
-//   // }, []);
-
-//   return (
-//     <div className="flex flex-col items-center">
-//       <div>Hello</div>
-//       {/* <div>
-//         {data.map((item) => (
-//           <div>{item.email}</div>
-//         ))}
-//       </div> */}
-//     </div>
-//   );
-// }
-
+'use client'
 import React from 'react';
 import { Inter } from 'next/font/google';
 import {
@@ -51,6 +11,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { SignInButton, useAuth } from '@clerk/nextjs';
 import {
   Card,
   CardContent,
@@ -75,10 +36,22 @@ import LeaderboardDesasiswa from '@/components/LeaderboardDesasiswa';
 const inter = Inter({ subsets: ['latin'] });
 
 const Home: React.FC = () => {
+
+	const { isSignedIn } = useAuth();
+
   return (
-    <div className={`${inter.className} grid grid-cols-1 max-w-full `}>
+    <div className={`${inter.className} grid grid-cols-12 items-center gap-15 max-w-[90%]`}>
+			{!isSignedIn ? (
+        <div className="col-span-full flex justify-end p-4">
+          <SignInButton>
+            <button className="bg-[#654321] hover:bg-[#8B5E3C] text-white px-6 py-2 rounded-md transition-colors duration-200 flex items-center gap-2 font-medium">
+              Sign In
+            </button>
+          </SignInButton>
+        </div>
+      ) : null}
       {/* Announcement */}
-      <div className="bg-gray-100 p-4 w-screen h-96 flex">
+      <div className="col-span-full bg-white p-4 w-full h-fill flex">
         <div className="w-1/2 p-4">
           <h1 className="text-3xl font-bold">Announcement Topic</h1>
           <h2 className="text-lg font-bold">Announcement Sub Topic</h2>
@@ -110,7 +83,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Buttons */}
-      <div className="flex justify-center gap-80 py-2.5">
+      <div className="col-span-full flex justify-around py-2.5">
         <button className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2">
           <FaMapMarkerAlt />
           Register Now!
@@ -127,7 +100,7 @@ const Home: React.FC = () => {
 
       {/* News */}
 
-      <div className="bg-gray-100 px-4 pt-4">
+      <div className="bg-gray-100 px-4 pt-4 col-span-full">
         <button
           title="News"
           className="text-[#654321] flex flex-row gap-2 w-[160px]"
@@ -138,7 +111,7 @@ const Home: React.FC = () => {
           </div>
         </button>
       </div>
-      <div className="flex bg-gray-100 p-4">
+      <div className="flex bg-gray-100 p-4 col-span-full">
         <ScrollArea className="w-full whitespace-nowrap rounded-md">
           <div className="flex gap-4">
             {NewsDetails.map((news) => (
@@ -178,7 +151,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Leaderboard */}
-      <div className="bg-gray-100 px-4 pt-4">
+      <div className="bg-gray-100 px-4 pt-4 col-span-full">
         <button
           title="Leaderboard"
           className="text-[#654321] flex flex-row gap-2 w-[160px]"
@@ -189,12 +162,12 @@ const Home: React.FC = () => {
           </div>
         </button>
       </div>
-      <div className="flex bg-gray-100 p-4">
+      <div className="flex bg-gray-100 p-4 col-span-full">
         <LeaderboardDesasiswa />
       </div>
 
       {/* Sports List */}
-      <div className="bg-gray-100 px-4 pt-4">
+      <div className="bg-gray-100 px-4 pt-4 col-span-full">
         <button
           title="SportsList"
           className="text-[#654321] flex flex-row gap-2 w-[160px]"
@@ -205,7 +178,7 @@ const Home: React.FC = () => {
           </div>
         </button>
       </div>
-      <div className="flex bg-gray-100 p-4 pb-10">
+      <div className="flex bg-gray-100 p-4 pb-10 col-span-full">
         <ScrollArea className="w-full whitespace-nowrap rounded-md">
           <div className="flex gap-4">
             {SportsListDetails.map((sports) => (
