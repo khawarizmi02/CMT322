@@ -1,4 +1,4 @@
-import { db } from "@/app/firebase/page";
+import { db } from '@/firebase/firebase';
 import { collection, setDoc, doc , addDoc, getDocs, getDoc, query, where, updateDoc, arrayUnion } from 'firebase/firestore';
 import { sports } from '@/data/type/index';
 
