@@ -1,5 +1,5 @@
 import { db } from '@/firebase/firebase';
-import { collection, setDoc, doc , addDoc, getDocs, getDoc, query, where, updateDoc, arrayUnion } from 'firebase/firestore';
+import { collection, setDoc, doc , addDoc, getDocs, getDoc, query, where, updateDoc, arrayUnion, deleteDoc } from 'firebase/firestore';
 import { sports } from '@/data/type/index';
 
 export class Firestore{
@@ -11,6 +11,11 @@ export class Firestore{
         } catch(e){
             console.error("Error adding document: ", e);
         }
+    }
+
+    async deleteSportsData(sportID: string){
+        await deleteDoc(doc(db, "sports", sportID));
+        console.log("Document with ID: ", sportID, " deleted");
     }
 
     //read sports data

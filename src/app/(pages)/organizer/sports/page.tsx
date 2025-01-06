@@ -10,7 +10,9 @@ import {
   Users,
   Target,
   CircleDot,
-  Flag
+  Flag,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import {
   Card,
@@ -26,19 +28,17 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import firestore from '@/app/api/firebase/firestore';
-
-type Sport = {
-  sportID: string;
-  sportName: string;
-  sportCategory: string;
-  phase: number;
-};
+import { sports } from '@/data/type';
+import AddSportsButton from '@/components/addSportsButton';
+import DeleteSportButton from '@/components/deleteSportsButton';
 
 export default function Sports() {
   const router = useRouter();
-  const [sports, setSports] = useState<Sport[]>([]);
+  const [sports, setSports] = useState<sports[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedSports, setExpandedSports] = useState<{ [key: string]: boolean }>({});
+  const [activeTab, setActiveTab] = useState<string>('1');
 
   useEffect(() => {
     fetchSports();
@@ -48,7 +48,12 @@ export default function Sports() {
     try {
       const sportsData = await firestore.readSportsData();
       setSports(sportsData);
-      console.log('Sports data:', sportsData);
+      // Initialize expanded state for all sports
+      const initialExpandedState: { [key: string]: boolean } = {};
+      sportsData.forEach(sport => {
+        initialExpandedState[sport.sportName] = true;  // Start expanded
+      });
+      setExpandedSports(initialExpandedState);
     } catch (err) {
       setError('Failed to fetch sports data');
       console.error('Error:', err);
@@ -63,15 +68,15 @@ export default function Sports() {
     
     switch (true) {
       case lowercaseSport.includes('badminton'):
-        return <Target {...iconProps} />; // Target icon for precision sports like badminton
+        return <Target {...iconProps} />;
       case lowercaseSport.includes('volleyball'):
-        return <Users {...iconProps} />; // Users icon for team sports
+        return <Users {...iconProps} />;
       case lowercaseSport.includes('track'):
-        return <Flag {...iconProps} />; // Flag for track events
+        return <Flag {...iconProps} />;
       case lowercaseSport.includes('athletics'):
-        return <CircleDot {...iconProps} />; // CircleDot for athletics
+        return <CircleDot {...iconProps} />;
       default:
-        return <Dumbbell {...iconProps} />; // Default sport icon
+        return <Dumbbell {...iconProps} />;
     }
   };
 
@@ -85,6 +90,45 @@ export default function Sports() {
         return <Timer className="w-4 h-4" />;
       default:
         return null;
+    }
+  };
+
+  const toggleSportExpansion = (sportName: string) => {
+    setExpandedSports(prev => ({
+      ...prev,
+      [sportName]: !prev[sportName]
+    }));
+  };
+
+  const groupSportsByName = (phase: number) => {
+    const phaseSports = sports.filter(sport => sport.phase === phase);
+    const grouped = phaseSports.reduce((acc, sport) => {
+      if (!acc[sport.sportName]) {
+        acc[sport.sportName] = [];
+      }
+      acc[sport.sportName].push(sport);
+      return acc;
+    }, {} as { [key: string]: sports[] });
+    return grouped;
+  };
+
+  const handleAddSport = async (sportData: Omit<sports, 'sportID'>) => {
+    try {
+      await firestore.addSportsData(sportData);
+      fetchSports();
+    } catch (error) {
+      setError('Failed to add sport');
+      console.error('Error:', error);
+    }
+  };
+
+  const handleDeleteSport = async (sportID: string) => {
+    try {
+      await firestore.deleteSportsData(sportID);
+      fetchSports(); // Refresh the list after deletion
+    } catch (error) {
+      setError('Failed to delete sport');
+      console.error('Error:', error);
     }
   };
 
@@ -111,12 +155,18 @@ export default function Sports() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#654321] mb-2">SUKAD Sports Events</h1>
-        <p className="text-gray-600">Explore sports events across all phases of the competition</p>
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-[#654321] mb-2">SUKAD Sports Events</h1>
+          <p className="text-gray-600">Explore sports events across all phases of the competition</p>
+        </div>
+        <AddSportsButton 
+          currentPhase={parseInt(activeTab)} 
+          onAddSport={handleAddSport} 
+        />
       </div>
 
-      <Tabs defaultValue="1" className="w-full">
+      <Tabs defaultValue="1" className="w-full" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3 mb-8">
           {[1, 2, 3].map((phase) => (
             <TabsTrigger
@@ -132,33 +182,53 @@ export default function Sports() {
 
         {[1, 2, 3].map((phase) => (
           <TabsContent key={phase} value={phase.toString()}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sports
-                .filter(sport => sport.phase === phase)
-                .map((sport) => (
-                  <Card 
-                    key={sport.sportID}
-                    className="hover:shadow-lg transition-shadow cursor-pointer group"
-                    onClick={() => router.push(`/organizer/sports/${sport.sportName.toLowerCase()}?category=${sport.sportCategory}`)}
+            <div className="grid grid-cols-1 gap-6">
+              {Object.entries(groupSportsByName(phase)).map(([sportName, sportCategories]) => (
+                <Card key={sportName} className="overflow-hidden">
+                  <CardHeader 
+                    className="cursor-pointer bg-[#654321]/5 hover:bg-[#654321]/10"
+                    onClick={() => toggleSportExpansion(sportName)}
                   >
-                    <CardHeader>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-full bg-[#654321]/10 group-hover:bg-[#654321]/20 transition-colors">
-                            {getSportIcon(sport.sportName)}
-                          </div>
-                          <div>
-                            <CardTitle className="text-lg">{sport.sportName}</CardTitle>
-                            <CardDescription className="text-sm font-medium text-gray-700">
-                              {sport.sportCategory}
-                            </CardDescription>
-                          </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-full bg-[#654321]/10">
+                          {getSportIcon(sportName)}
                         </div>
+                        <CardTitle className="text-xl">{sportName}</CardTitle>
+                        <span className="text-sm text-gray-600">
+                          ({sportCategories.length} {sportCategories.length === 1 ? 'category' : 'categories'})
+                        </span>
                       </div>
-                    </CardHeader>
-                  </Card>
+                      {expandedSports[sportName] ? <ChevronUp /> : <ChevronDown />}
+                    </div>
+                  </CardHeader>
+                  {expandedSports[sportName] && (
+                    <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                      {sportCategories.map((sport) => (
+                        <div
+                          key={sport.sportID}
+                          className="p-4 rounded-lg border border-gray-200 hover:border-[#654321] hover:shadow-md transition-all cursor-pointer relative"
+                        >
+                          <div
+                            onClick={() => router.push(`/organizer/sports/${sport.sportName.toLowerCase()}?category=${sport.sportCategory}`)}
+                          >
+                            <h3 className="font-medium text-lg text-[#654321] pr-8">{sport.sportCategory}</h3>
+                            <p className="text-sm text-gray-600">Click to view details</p>
+                          </div>
+                          {sport.sportID && (
+                            <DeleteSportButton
+                              sportID={sport.sportID}
+                              sportCategory={sport.sportCategory}
+                              onDelete={handleDeleteSport}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </CardContent>
+                  )}
+                </Card>
               ))}
-              {sports.filter(sport => sport.phase === phase).length === 0 && (
+              {Object.keys(groupSportsByName(phase)).length === 0 && (
                 <Card className="col-span-full">
                   <CardHeader>
                     <CardTitle>No Sports Available</CardTitle>
