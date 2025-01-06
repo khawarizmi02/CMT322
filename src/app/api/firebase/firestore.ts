@@ -1,5 +1,5 @@
 import { db } from '@/firebase/firebase';
-import { collection, setDoc, doc , addDoc, getDocs, getDoc, query, where, updateDoc, arrayUnion, deleteDoc } from 'firebase/firestore';
+import { collection, setDoc, doc , addDoc, getDocs, getDoc, query, where, updateDoc, arrayUnion } from 'firebase/firestore';
 import { sports } from '@/data/type/index';
 
 export class Firestore{
@@ -13,24 +13,13 @@ export class Firestore{
         }
     }
 
-    async deleteSportsData(sportID: string){
-        await deleteDoc(doc(db, "sports", sportID));
-        console.log("Document with ID: ", sportID, " deleted");
-    }
-
     //read sports data
     async readSportsData(){
         const sports: sports[] = [];
         const querySnapshot = await getDocs(collection(db, "sports"));
         querySnapshot.forEach((doc) => {
-            sports.push({
-                sportID: doc.id,
-                sportName: doc.data().sportName,
-                sportCategory: doc.data().sportCategory,
-                phase: doc.data().phase
-            });
+            sports.push(doc.data() as sports);
         });
-        console.log(sports);
         return sports;
     }
 }
