@@ -4,6 +4,19 @@
 //User just need to register the sport for what phase only.
 //User can't add new sport to the list without admin help etc.
 
+export const DESASISWA_LIST = [
+    'Aman Damai',
+    'Bakti Permai',
+    'Cahaya Gemilang',
+    'Fajar Harapan',
+    'Indah Kembara',
+    'Jaya Lembaran Utama',
+    'Murni Nurani',
+    'Restu',
+    'Saujana',
+    'Tekun'
+] as const;
+
 export const SPORTS_LIST = [
     'Badminton',
     'Track',
@@ -38,4 +51,37 @@ export type sports = {
     sportName: string;
     sportCategory: string;
     phase: number;
+}
+
+export type matches = {
+    matchID?: string;
+    sportID: string; // refer to sports
+    matchDate?: string;
+    matchTime?: string;
+    matchStatus?: 'upcoming' | 'ongoing' | 'completed';
+    matchVenue?: string;
+    matchWinner?: string;
+    matchScore?: string;
+    teams?: matchesTeam[]; // refer to participants
+    participants?: matchesParticipant[]; // refer to participants
+    sportName: string; //Duplicate data to make it easier to query and filter
+    sportCategory: string; //Duplicate data to make it easier to query and filter
+}
+
+export type matchesParticipant = {
+    participantID?: string;
+    matchID: string; // refer to matches
+    name: string;
+    matricNo: string;
+    desasiswa?: string; //only filled if the participated in non team sport
+}
+
+export type matchesTeam = {
+    teamID?: string;
+    matchID: string; // refer to matches
+    name: string;
+    score?: number;
+    record?: string;
+    desasiswa?: string; //A team can only represent one desasiswa
+    participants?: matchesParticipant[]; // refer to participants
 }
