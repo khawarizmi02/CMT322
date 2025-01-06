@@ -11,10 +11,10 @@ export const SPORTS_LIST = [
 ] as const;
 
 export const BADMINTON_CATEGORIES = [
-    'Men\'s Single Badminton',
-    'Women\'s Single Badminton',
-    'Men\'s Double Badminton',
-    'Women\'s Double Badminton',
+    'Men\'s Singles',
+    'Women\'s Singles',
+    'Men\'s Doubles',
+    'Women\'s Doubles',
 ] as const;
 
 export const TRACKS_CATEGORIES = [
@@ -34,7 +34,8 @@ export const VOLLEYBALL_CATEGORIES = [
 ] as const;
 
 export type sports = {
-    sportID: string;
+    sportID?: string;
     sportName: string;
     sportCategory: string;
+    phase: number;
 }
