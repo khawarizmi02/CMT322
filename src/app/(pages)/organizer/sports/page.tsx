@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 import { 
   Trophy, 
   Medal, 
@@ -40,9 +41,13 @@ export default function Sports() {
   const [expandedSports, setExpandedSports] = useState<{ [key: string]: boolean }>({});
   const [activeTab, setActiveTab] = useState<string>('1');
 
+  const { isSignedIn } = useUser();
+  console.log(isSignedIn);
+  
   useEffect(() => {
     fetchSports();
   }, []);
+
 
   const fetchSports = async () => {
     try {
@@ -160,10 +165,12 @@ export default function Sports() {
           <h1 className="text-3xl font-bold text-[#654321] mb-2">SUKAD Sports Events</h1>
           <p className="text-gray-600">Explore sports events across all phases of the competition</p>
         </div>
-        <AddSportsButton 
-          currentPhase={parseInt(activeTab)} 
-          onAddSport={handleAddSport} 
-        />
+        {isSignedIn && (
+          <AddSportsButton 
+            currentPhase={parseInt(activeTab)} 
+            onAddSport={handleAddSport} 
+          />
+        )}
       </div>
 
       <Tabs defaultValue="1" className="w-full" value={activeTab} onValueChange={setActiveTab}>
@@ -215,7 +222,7 @@ export default function Sports() {
                             <h3 className="font-medium text-lg text-[#654321] pr-8">{sport.sportCategory}</h3>
                             <p className="text-sm text-gray-600">Click to view details</p>
                           </div>
-                          {sport.sportID && (
+                          {sport.sportID && isSignedIn && (
                             <DeleteSportButton
                               sportID={sport.sportID}
                               sportCategory={sport.sportCategory}
