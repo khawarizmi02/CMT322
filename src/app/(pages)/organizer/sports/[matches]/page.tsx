@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import { matches } from '@/data/type/index';
 import EditMatches from '@/components/editMatches';
-import firestore from '@/app/api/firebase/firestore';
+import firestore from '@/lib/firebase/firestore';
 
 const MatchesPage = () => {
   const [matches, setMatches] = useState<matches[]>([]);

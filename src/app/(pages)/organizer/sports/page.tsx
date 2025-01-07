@@ -28,7 +28,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
-import firestore from '@/app/api/firebase/firestore';
+import firestore from '@/lib/firebase/firestore';
 import { sports } from '@/data/type';
 import AddSportsButton from '@/components/addSportsButton';
 import DeleteSportButton from '@/components/deleteSportsButton';
