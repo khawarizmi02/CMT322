@@ -114,8 +114,8 @@ const Home: React.FC = () => {
       <div className="flex bg-gray-100 p-4 col-span-full">
         <ScrollArea className="w-full whitespace-nowrap rounded-md">
           <div className="flex gap-4">
-            {NewsDetails.map((news) => (
-              <div className="w-[400px] h-[400px]">
+            {NewsDetails.map((news, index) => (
+              <div key={news.id} className="w-[400px] h-[400px]">
                 <Card className="w-full h-full flex flex-col">
                   <CardHeader className="p-4 space-y-2 flex-shrink-0">
                     <CardTitle className="text-lg">{news.title}</CardTitle>
@@ -181,32 +181,30 @@ const Home: React.FC = () => {
       <div className="flex bg-gray-100 p-4 pb-10 col-span-full">
         <ScrollArea className="w-full whitespace-nowrap rounded-md">
           <div className="flex gap-4">
-            {SportsListDetails.map((sports) => (
-              <>
-                <div className="w-[200px] h-[250px]">
-                  <Card className="w-full h-full flex flex-col">
-                    <CardHeader className="p-2 space-y-2 flex-shrink-0">
-                      <CardTitle className="text-lg">{sports.title}</CardTitle>
-                      <CardDescription className="text-sm line-clamp-2">
-                        {' '}
-                        {/* Added line-clamp-2 */}
-                        {sports.category}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-2 flex-grow flex items-center justify-center">
-                      <div className="relative w-full h-full">
-                        <Image
-                          src={`${sports.image}`}
-                          alt="Football"
-                          layout="fill"
-                          objectFit="contain"
-                          className="rounded-md"
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </>
+            {SportsListDetails.map((sports, index) => (
+              <div key={sports.id} className="w-[200px] h-[250px]">
+                <Card className="w-full h-full flex flex-col">
+                  <CardHeader className="p-2 space-y-2 flex-shrink-0">
+                    <CardTitle className="text-lg">{sports.title}</CardTitle>
+                    <CardDescription className="text-sm line-clamp-2">
+                      {' '}
+                      {/* Added line-clamp-2 */}
+                      {sports.category}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-2 flex-grow flex items-center justify-center">
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={`${sports.image}`}
+                        alt="Football"
+                        layout="fill"
+                        objectFit="contain"
+                        className="rounded-md"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             ))}
           </div>
           <ScrollBar orientation="horizontal" />
@@ -222,7 +220,7 @@ const Home: React.FC = () => {
             <div className="flex flex-col">
               <h3 className="font-semibold text-lg mb-4">Matches</h3>
               <ul className="space-y-2">
-                <li>
+                <li key={1}>
                   <Link
                     href="/current-matches"
                     className="text-gray-600 hover:text-gray-900"
@@ -230,7 +228,7 @@ const Home: React.FC = () => {
                     Current Matches
                   </Link>
                 </li>
-                <li>
+                <li key={2}>
                   <Link
                     href="/leaderboard"
                     className="text-gray-600 hover:text-gray-900"
@@ -238,7 +236,7 @@ const Home: React.FC = () => {
                     Leaderboard
                   </Link>
                 </li>
-                <li>
+                <li key={3}>
                   <Link
                     href="/schedule"
                     className="text-gray-600 hover:text-gray-900"
@@ -246,7 +244,7 @@ const Home: React.FC = () => {
                     Match Schedule
                   </Link>
                 </li>
-                <li>
+                <li key={4}>
                   <Link
                     href="/history"
                     className="text-gray-600 hover:text-gray-900"
@@ -261,7 +259,7 @@ const Home: React.FC = () => {
             <div className="flex flex-col">
               <h3 className="font-semibold text-lg mb-4">Join Us</h3>
               <ul className="space-y-2">
-                <li>
+                <li key={1}>
                   <Link
                     href="/register"
                     className="text-gray-600 hover:text-gray-900"
@@ -269,7 +267,7 @@ const Home: React.FC = () => {
                     Register Now
                   </Link>
                 </li>
-                <li>
+                <li key={2}>
                   <Link
                     href="/news"
                     className="text-gray-600 hover:text-gray-900"
@@ -277,7 +275,7 @@ const Home: React.FC = () => {
                     News
                   </Link>
                 </li>
-                <li>
+                <li key={3}>
                   <Link
                     href="/sukad-history"
                     className="text-gray-600 hover:text-gray-900"
@@ -285,7 +283,7 @@ const Home: React.FC = () => {
                     SUKAD History
                   </Link>
                 </li>
-                <li>
+                <li key={4}>
                   <Link
                     href="/volunteer"
                     className="text-gray-600 hover:text-gray-900"
@@ -300,7 +298,7 @@ const Home: React.FC = () => {
             <div className="flex flex-col">
               <h3 className="font-semibold text-lg mb-4">About Us</h3>
               <ul className="space-y-2">
-                <li>
+                <li key={1}>
                   <Link
                     href="/support"
                     className="text-gray-600 hover:text-gray-900"
@@ -308,7 +306,7 @@ const Home: React.FC = () => {
                     Support
                   </Link>
                 </li>
-                <li>
+                <li key={2}>
                   <Link
                     href="/developers"
                     className="text-gray-600 hover:text-gray-900"
@@ -316,7 +314,7 @@ const Home: React.FC = () => {
                     Developers
                   </Link>
                 </li>
-                <li>
+                <li key={3}>
                   <Link
                     href="/contact"
                     className="text-gray-600 hover:text-gray-900"
