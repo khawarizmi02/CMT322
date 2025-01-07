@@ -1,0 +1,303 @@
+[
+    {
+      "sportID": "sport01",
+      "sportName": "Badminton",
+      "sportCategory": "Men's Singles",
+      "matchDate": "2025-01-10",
+      "matchTime": "10:00",
+      "matchStatus": "upcoming",
+      "matchVenue": "Sports Complex Hall A",
+      "matchWinner": null,
+      "matchScore": null,
+      "teams": [],
+      "participants": [
+        {
+          "name": "Ali Bin Ahmad",
+          "matricNo": "U1234567",
+          "desasiswa": "Aman Damai"
+        },
+        {
+          "name": "Ahmad Bin Ali",
+          "matricNo": "U2345678",
+          "desasiswa": "Bakti Permai"
+        }
+      ]
+    },
+    {
+      "sportID": "sport01",
+      "sportName": "Badminton",
+      "sportCategory": "Women's Singles",
+      "matchDate": "2025-01-10",
+      "matchTime": "11:00",
+      "matchStatus": "upcoming",
+      "matchVenue": "Sports Complex Hall B",
+      "matchWinner": null,
+      "matchScore": null,
+      "teams": [],
+      "participants": [
+        {
+          "name": "Nur Aisyah",
+          "matricNo": "U3456789",
+          "desasiswa": "Cahaya Gemilang"
+        },
+        {
+          "name": "Siti Aminah",
+          "matricNo": "U4567890",
+          "desasiswa": "Fajar Harapan"
+        }
+      ]
+    },
+    {
+      "sportID": "sport01",
+      "sportName": "Badminton",
+      "sportCategory": "Men's Doubles",
+      "matchDate": "2025-01-10",
+      "matchTime": "14:00",
+      "matchStatus": "upcoming",
+      "matchVenue": "Sports Complex Hall A",
+      "matchWinner": null,
+      "matchScore": null,
+      "teams": [
+        {
+          "name": "Aman Damai A",
+          "desasiswa": "Aman Damai",
+          "participants": [
+            {
+              "name": "Mohd Danial",
+              "matricNo": "U5678901"
+            },
+            {
+              "name": "Ismail Rahman",
+              "matricNo": "U6789012"
+            }
+          ]
+        },
+        {
+          "name": "Bakti Permai A",
+          "desasiswa": "Bakti Permai",
+          "participants": [
+            {
+              "name": "Farid Hassan",
+              "matricNo": "U7890123"
+            },
+            {
+              "name": "Syed Amir",
+              "matricNo": "U8901234"
+            }
+          ]
+        }
+      ],
+      "participants": []
+    },
+    {
+      "sportID": "sport01",
+      "sportName": "Badminton",
+      "sportCategory": "Women's Doubles",
+      "matchDate": "2025-01-12",
+      "matchTime": "10:00",
+      "matchStatus": "upcoming",
+      "matchVenue": "Sports Complex Hall B",
+      "matchWinner": null,
+      "matchScore": null,
+      "teams": [
+        {
+          "name": "Aman Damai Women",
+          "desasiswa": "Aman Damai",
+          "participants": [
+            {
+              "name": "Nabila Zainal",
+              "matricNo": "U8901235"
+            },
+            {
+              "name": "Aminah Razak",
+              "matricNo": "U9012346"
+            }
+          ]
+        },
+        {
+          "name": "Cahaya Gemilang Women",
+          "desasiswa": "Cahaya Gemilang",
+          "participants": [
+            {
+              "name": "Siti Nurhaliza",
+              "matricNo": "U3456780"
+            },
+            {
+              "name": "Mira Kamarul",
+              "matricNo": "U4567891"
+            }
+          ]
+        }
+      ],
+      "participants": []
+    },
+    {
+      "sportID": "sport03",
+      "sportName": "Volleyball",
+      "sportCategory": "Men's Volleyball",
+      "matchDate": "2025-01-15",
+      "matchTime": "09:00",
+      "matchStatus": "upcoming",
+      "matchVenue": "Sports Complex Court A",
+      "matchWinner": null,
+      "matchScore": null,
+      "teams": [
+        {
+          "name": "Tekun Men",
+          "desasiswa": "Tekun",
+          "participants": [
+            {
+              "name": "Razif Hasan",
+              "matricNo": "U3123459"
+            },
+            {
+              "name": "Hakimi Syah",
+              "matricNo": "U4123460"
+            }
+          ]
+        },
+        {
+          "name": "Saujana Men",
+          "desasiswa": "Saujana",
+          "participants": [
+            {
+              "name": "Kamal Arif",
+              "matricNo": "U5123461"
+            },
+            {
+              "name": "Hafiz Fadzil",
+              "matricNo": "U6123462"
+            }
+          ]
+        }
+      ],
+      "participants": []
+    },
+    {
+      "sportID": "sport03",
+      "sportName": "Volleyball",
+      "sportCategory": "Women's Volleyball",
+      "matchDate": "2025-01-16",
+      "matchTime": "11:00",
+      "matchStatus": "upcoming",
+      "matchVenue": "Sports Complex Court A",
+      "matchWinner": null,
+      "matchScore": null,
+      "teams": [
+        {
+          "name": "Aman Damai Women",
+          "desasiswa": "Aman Damai",
+          "participants": [
+            {
+              "name": "Nur Aisyah",
+              "matricNo": "U3456789"
+            },
+            {
+              "name": "Siti Aminah",
+              "matricNo": "U4567890"
+            }
+          ]
+        },
+        {
+          "name": "Restu Women",
+          "desasiswa": "Restu",
+          "participants": [
+            {
+              "name": "Mira Zainal",
+              "matricNo": "U5678902"
+            },
+            {
+              "name": "Yasmin Qamar",
+              "matricNo": "U6789013"
+            }
+          ]
+        }
+      ],
+      "participants": []
+    },
+    {
+      "sportID": "sport03",
+      "sportName": "Volleyball",
+      "sportCategory": "Men's Volleyball",
+      "matchDate": "2025-01-20",
+      "matchTime": "12:00",
+      "matchStatus": "upcoming",
+      "matchVenue": "Sports Complex Court B",
+      "matchWinner": null,
+      "matchScore": null,
+      "teams": [
+        {
+          "name": "Fajar Harapan Men",
+          "desasiswa": "Fajar Harapan",
+          "participants": [
+            {
+              "name": "Mohammad Rizal",
+              "matricNo": "U7890124"
+            },
+            {
+              "name": "Arif Akmal",
+              "matricNo": "U8901235"
+            }
+          ]
+        },
+        {
+          "name": "Indah Kembara Men",
+          "desasiswa": "Indah Kembara",
+          "participants": [
+            {
+              "name": "Nashitah Kamil",
+              "matricNo": "U9012347"
+            },
+            {
+              "name": "Sulaiman Omar",
+              "matricNo": "U10123458"
+            }
+          ]
+        }
+      ],
+      "participants": []
+    },
+    {
+      "sportID": "sport03",
+      "sportName": "Volleyball",
+      "sportCategory": "Women's Volleyball",
+      "matchDate": "2025-01-21",
+      "matchTime": "15:00",
+      "matchStatus": "upcoming",
+      "matchVenue": "Sports Complex Court B",
+      "matchWinner": null,
+      "matchScore": null,
+      "teams": [
+        {
+          "name": "Fajar Harapan Women",
+          "desasiswa": "Fajar Harapan",
+          "participants": [
+            {
+              "name": "Lina Puteh",
+              "matricNo": "U1234568"
+            },
+            {
+              "name": "Siti Kalsom",
+              "matricNo": "U2345679"
+            }
+          ]
+        },
+        {
+          "name": "Murni Nurani Women",
+          "desasiswa": "Murni Nurani",
+          "participants": [
+            {
+              "name": "Zarina Salim",
+              "matricNo": "U3456789"
+            },
+            {
+              "name": "Diyana Zaki",
+              "matricNo": "U4567890"
+            }
+          ]
+        }
+      ],
+      "participants": []
+    }
+  ]
+  

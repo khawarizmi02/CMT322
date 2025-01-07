@@ -69,19 +69,13 @@ export type matches = {
 }
 
 export type matchesParticipant = {
-    participantID?: string;
-    matchID: string; // refer to matches
     name: string;
     matricNo: string;
     desasiswa?: string; //only filled if the participated in non team sport
 }
 
 export type matchesTeam = {
-    teamID?: string;
-    matchID: string; // refer to matches
     name: string;
-    score?: number;
-    record?: string;
     desasiswa?: string; //A team can only represent one desasiswa
     participants?: matchesParticipant[]; // refer to participants
 }
