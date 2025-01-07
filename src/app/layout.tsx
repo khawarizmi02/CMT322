@@ -26,30 +26,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isClient, setisClient] = React.useState(false);
-
-  React.useEffect(() => {
-    setisClient(true);
-  }, []);
-
-  if (!isClient) {
-    return null;
-  }
-
   return (
-    <html lang="en">
-      <head>
-        <title>{String(metadata.title) ?? 'Default Title'}</title>
-      </head>
-      <ClerkProvider>
+    <ClerkProvider>
+      <html lang="en">
+        <head>
+          <title>{String(metadata.title) ?? 'Default Title'}</title>
+        </head>
         <body className="antialiased">
           <AuthContent>
-						<main className='flex flex-col items-center'>{children}</main>
-					</AuthContent>
+            <main className="flex flex-col items-center">{children}</main>
+          </AuthContent>
           <Toaster />
         </body>
-      </ClerkProvider>
-    </html>
+      </html>
+    </ClerkProvider>
   );
 }
 
