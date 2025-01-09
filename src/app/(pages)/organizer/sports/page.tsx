@@ -217,7 +217,7 @@ export default function Sports() {
                           className="p-4 rounded-lg border border-gray-200 hover:border-[#654321] hover:shadow-md transition-all cursor-pointer relative"
                         >
                           <div
-                            onClick={() => router.push(`/organizer/sports/${sport.sportName.toLowerCase()}?category=${sport.sportCategory}`)}
+                            onClick={() => router.push(`/organizer/sports/${sport.sportName}?category=${sport.sportCategory}`)}
                           >
                             <h3 className="font-medium text-lg text-[#654321] pr-8">{sport.sportCategory}</h3>
                             <p className="text-sm text-gray-600">Click to view details</p>
