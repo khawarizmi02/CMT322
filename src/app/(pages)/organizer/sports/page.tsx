@@ -55,13 +55,8 @@ export default function Sports() {
       const response = await fetch('/api/organizer/sport-page');
       const body = await response.json();
       const sportsData = body.sports;
-      toast({
-        title: 'Sports Updated',
-        description: 'Sports data has been updated'
-      });
-
-      //const sportsData = await firestore.readSportsData();
       setSports(sportsData);
+      
       // Initialize expanded state for all sports
       const initialExpandedState: { [key: string]: boolean } = {};
       sportsData.forEach((sport: { sportName: string | number; }) => {
@@ -136,7 +131,6 @@ export default function Sports() {
         body: JSON.stringify(sportData),
       });
 
-      //await firestore.addSportsData(sportData);
       if (!response.ok) {
         throw new Error('Failed to add sport');
       }
@@ -167,7 +161,7 @@ export default function Sports() {
         title: 'Success',
         description: 'Sport deleted successfully'
       });
-      //await firestore.deleteSportsData(sportID);
+
       fetchSports(); // Refresh the list after deletion
     } catch (error) {
       setError('Failed to delete sport');
