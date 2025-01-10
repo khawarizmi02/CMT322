@@ -1,13 +1,38 @@
 import { db } from '@/firebase/firebase';
 import { collection, setDoc, doc , addDoc, getDocs, getDoc, query, where, updateDoc, arrayUnion, deleteDoc } from 'firebase/firestore';
-import { sports, matches, matchesParticipant, matchesTeam } from '@/data/type/index';
+import { sports, sportCategory, matches, matchesParticipant, matchesTeam } from '@/data/type/index';
 
 export class Firestore{
     //add sports data
-    async addSportsData(data: sports){
+    async addSportsData(data: sports, ID?: string){
         try{
-            const docRef = await addDoc(collection(db, "sports"), data);
+            const docRef = await addDoc(collection(db, "sports"), {
+                sportName: data.sportName,
+                sportPhase: data.sportPhase
+            });
             console.log("Document written with ID: ", docRef.id);
+            //Add the sport category to the sport
+            if(ID){
+                await updateDoc(doc(db, "sports", docRef.id), {
+                    sportCategory: arrayUnion(ID)
+                });
+            }
+        } catch(e){
+            console.error("Error adding document: ", e);
+        }
+    }
+
+    async addSportCategory(data: sportCategory){
+        try{
+            const docRef = await addDoc(collection(db, "sportCategory"), {
+                sportCategoryName: data.sportCategoryName,
+                imageUrl: '',
+                goldMedal: '',
+                silverMedal: '',
+                bronzeMedal: ''
+            });
+            console.log("Document written with ID: ", docRef.id);
+            return docRef.id;
         } catch(e){
             console.error("Error adding document: ", e);
         }
@@ -22,12 +47,13 @@ export class Firestore{
     async readSportsData(){
         const sports: sports[] = [];
         const querySnapshot = await getDocs(collection(db, "sports"));
+        //Nak kena query sportCategory kat sini
         querySnapshot.forEach((doc) => {
             sports.push({
                 sportID: doc.id,
                 sportName: doc.data().sportName,
-                sportCategory: doc.data().sportCategory,
-                phase: doc.data().phase
+                sportCategory: doc.data().sportCategory, //Ni dalam array??? ada document ID
+                sportPhase: doc.data().phase
             });
         });
         console.log(sports);
