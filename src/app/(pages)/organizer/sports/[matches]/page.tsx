@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -32,22 +33,38 @@ import EditMatches from '@/components/editMatches';
 import firestore from '@/lib/firebase/firestore';
 
 const MatchesPage = () => {
+  const searchParams = useSearchParams();
+  const urlCategory = searchParams.get('category');
+  const sportName = window.location.pathname.split('/').pop();
+
   const [matches, setMatches] = useState<matches[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedSport, setSelectedSport] = useState('All Sports');
-  const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const [selectedCategory, setSelectedCategory] = useState(urlCategory || 'All Categories');
   const [filteredMatches, setFilteredMatches] = useState<matches[]>([]);
 
   // Fetch matches data
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        //await firestore.importMatchesData();
         setLoading(true);
         const data = await firestore.readMatches();
-        setMatches(data);
-        setFilteredMatches(data);
+        
+        // First filter to only include matches of the selected sport
+        const sportMatches = data.filter(match => 
+          match.sportName.toLowerCase() === sportName?.toLowerCase()
+        );
+        
+        setMatches(sportMatches);
+        
+        // Apply category filtering if provided in URL
+        let filtered = [...sportMatches];
+        if (urlCategory) {
+          filtered = filtered.filter(match => 
+            match.sportCategory === urlCategory
+          );
+        }
+        setFilteredMatches(filtered);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
@@ -56,26 +73,21 @@ const MatchesPage = () => {
     };
 
     fetchMatches();
-  }, []);
+  }, [sportName, urlCategory]);
 
-  // Extract unique sports and categories
-  const sports = ['All Sports', ...new Set(matches.map(match => match.sportName))];
+  // Extract unique categories for the current sport only
   const categories = ['All Categories', ...new Set(matches.map(match => match.sportCategory))];
 
-  // Filter matches based on selected filters
+  // Filter matches based on selected category
   useEffect(() => {
     let filtered = [...matches];
-    
-    if (selectedSport !== 'All Sports') {
-      filtered = filtered.filter(match => match.sportName === selectedSport);
-    }
     
     if (selectedCategory !== 'All Categories') {
       filtered = filtered.filter(match => match.sportCategory === selectedCategory);
     }
     
     setFilteredMatches(filtered);
-  }, [selectedSport, selectedCategory, matches]);
+  }, [selectedCategory, matches]);
 
   // Group matches by status
   const upcomingMatches = filteredMatches.filter(match => match.matchStatus === 'upcoming');
@@ -206,30 +218,49 @@ const MatchesPage = () => {
     );
   }
 
+  // Add check for no matches for the current sport
+  if (matches.length === 0) {
+    return (
+      <div className="container mx-auto p-6 max-w-7xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">
+            {sportName?.charAt(0).toUpperCase()}{sportName?.slice(1)} Matches
+          </h1>
+        </div>
+        
+        <Card className="w-full p-8">
+          <CardContent className="flex flex-col items-center justify-center space-y-4 pt-6">
+            <div className="rounded-full bg-primary/10 p-6">
+              <Calendar className="h-12 w-12 text-primary" />
+            </div>
+            <h2 className="text-2xl font-semibold text-center">No Matches Available</h2>
+            <p className="text-muted-foreground text-center max-w-sm">
+              There are currently no matches scheduled for {sportName}. Please check back later for updates.
+            </p>
+            <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
+              <Clock className="h-4 w-4" />
+              <span>Matches will be added soon</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-6 max-w-7xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Sports Matches</h1>
-        <p className="text-muted-foreground">View and track all sports matches</p>
+        <h1 className="text-3xl font-bold mb-2">
+          {sportName?.charAt(0).toUpperCase()}{sportName?.slice(1)} Matches
+        </h1>
+        <p className="text-muted-foreground">
+          {selectedCategory !== 'All Categories' 
+            ? `Viewing ${selectedCategory} matches`
+            : `View and track all ${sportName} matches`}
+        </p>
       </div>
 
       <div className="flex flex-wrap gap-4 mb-6">
-        <div className="flex items-center gap-2 bg-secondary/50 p-2 rounded-lg">
-          <Filter className="h-5 w-5 text-muted-foreground" />
-          <Select value={selectedSport} onValueChange={setSelectedSport}>
-            <SelectTrigger className="w-[180px] border-none bg-transparent">
-              <SelectValue placeholder="Select sport" />
-            </SelectTrigger>
-            <SelectContent>
-              {sports.map((sport) => (
-                <SelectItem key={sport} value={sport}>
-                  {sport}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         <div className="flex items-center gap-2 bg-secondary/50 p-2 rounded-lg">
           <Filter className="h-5 w-5 text-muted-foreground" />
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
