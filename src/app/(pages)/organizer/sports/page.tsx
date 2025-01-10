@@ -32,6 +32,7 @@ import firestore from '@/lib/firebase/firestore';
 import { sports } from '@/data/type';
 import AddSportsButton from '@/components/addSportsButton';
 import DeleteSportButton from '@/components/deleteSportsButton';
+import { toast } from '@/hooks/use-toast';
 
 export default function Sports() {
   const router = useRouter();
@@ -51,11 +52,19 @@ export default function Sports() {
 
   const fetchSports = async () => {
     try {
-      const sportsData = await firestore.readSportsData();
+      const response = await fetch('/api/organizer/sport-page');
+      const body = await response.json();
+      const sportsData = body.sports;
+      toast({
+        title: 'Sports Updated',
+        description: 'Sports data has been updated'
+      });
+
+      //const sportsData = await firestore.readSportsData();
       setSports(sportsData);
       // Initialize expanded state for all sports
       const initialExpandedState: { [key: string]: boolean } = {};
-      sportsData.forEach(sport => {
+      sportsData.forEach((sport: { sportName: string | number; }) => {
         initialExpandedState[sport.sportName] = true;  // Start expanded
       });
       setExpandedSports(initialExpandedState);
@@ -119,7 +128,24 @@ export default function Sports() {
 
   const handleAddSport = async (sportData: Omit<sports, 'sportID'>) => {
     try {
-      await firestore.addSportsData(sportData);
+      const response = await fetch('/api/organizer/sport-page', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sportData),
+      });
+
+      //await firestore.addSportsData(sportData);
+      if (!response.ok) {
+        throw new Error('Failed to add sport');
+      }
+
+      toast({
+        title: 'Success',
+        description: 'Sport added successfully'
+      });
+
       fetchSports();
     } catch (error) {
       setError('Failed to add sport');
@@ -129,7 +155,19 @@ export default function Sports() {
 
   const handleDeleteSport = async (sportID: string) => {
     try {
-      await firestore.deleteSportsData(sportID);
+      const response = await fetch('/api/organizer/sport-page', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sportID }),
+      });
+
+      toast({
+        title: 'Success',
+        description: 'Sport deleted successfully'
+      });
+      //await firestore.deleteSportsData(sportID);
       fetchSports(); // Refresh the list after deletion
     } catch (error) {
       setError('Failed to delete sport');
