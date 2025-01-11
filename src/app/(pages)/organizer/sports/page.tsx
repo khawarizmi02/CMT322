@@ -110,7 +110,7 @@ export default function Sports() {
   };
 
   const groupSportsByName = (phase: number) => {
-    const phaseSports = sports.filter(sport => sport.phase === phase);
+    const phaseSports = sports.filter(sport => sport.sportPhase === phase);
     const grouped = phaseSports.reduce((acc, sport) => {
       if (!acc[sport.sportName]) {
         acc[sport.sportName] = [];
