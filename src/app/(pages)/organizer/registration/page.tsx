@@ -1,217 +1,264 @@
 'use client';
+
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useFieldArray } from "react-hook-form";
-import * as z from "zod";
-import { CirclePlus, User } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Users, User, Plus, Trash2 } from 'lucide-react';
+import { DESASISWA_LIST, SPORTS_LIST, BADMINTON_CATEGORIES, TRACKS_CATEGORIES, VOLLEYBALL_CATEGORIES } from '@/data/type';
+import { toast } from '@/hooks/use-toast';
 
-// Zod schema for form validation
-const registrantSchema = z.object({
-  registrants: z.array(
-    z.object({
-      sport: z.string().nonempty("Event is required"),
-      desasiswa: z.string().nonempty("Desasiswa is required"),
-      name: z.string().nonempty("Name is required"),
-      matricNumber: z.string().nonempty("Matric Number is required"),
-      school: z.string().nonempty("School is required"),
-    })
-  )
-});
+const RegistrationForm = () => {
+    const [selectedSport, setSelectedSport] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [participants, setParticipants] = useState([{ name: '', matricNo: '', desasiswa: '' }]);
+    const [teamName, setTeamName] = useState('');
+    const [teamDesasiswa, setTeamDesasiswa] = useState('');
 
-const RegistrationPage: React.FC = () => {
-  // Initialize form with react-hook-form and zod
-  const form = useForm<z.infer<typeof registrantSchema>>({
-    resolver: zodResolver(registrantSchema),
-    defaultValues: {
-      registrants: [
-        { sport: '', desasiswa: '', name: '', matricNumber: '', school: '' }
-      ]
-    }
-  });
+    const getCategoriesForSport = (sport: string) => {
+        switch (sport) {
+            case 'Badminton':
+                return BADMINTON_CATEGORIES;
+            case 'Track':
+                return TRACKS_CATEGORIES;
+            case 'Volleyball':
+                return VOLLEYBALL_CATEGORIES;
+            default:
+                return [];
+        }
+    };
 
-  // Use field array to manage dynamic form fields
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "registrants",
-  });
+    const isTeamSport = (category: string) => {
+        return category.includes('Doubles') || 
+               category.includes('Relay') || 
+               category.includes('Volleyball');
+    };
 
-  // Handle form submission
-  const onSubmit = (data: z.infer<typeof registrantSchema>) => {
-    console.log('Registrants:', data.registrants);
-    // Add your submission logic here
-  };
+    const addParticipant = () => {
+        setParticipants([...participants, { name: '', matricNo: '', desasiswa: '' }]);
+    };
 
-  return (
-    <div className="container mx-auto py-8 min-w-[680px]">
-      <div className="flex items-center gap-4 mb-8">
-          <User className="h-8 w-8 text-primary" />
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight">Register Participant</h1>
-            <p className="text-muted-foreground mt-1">Register new participants for SUKAD tournament</p>
-          </div>
-        </div>
-        
-      <Card className='bg-white'>
-      <CardHeader>
-            <CardTitle className="text-2xl flex items-center gap-2">
-              <CirclePlus className="h-6 w-6" />
-              Registration Form
-            </CardTitle>
-            <CardDescription>
-            Fill in the details below to register participants for the selected sports event
-            </CardDescription>
-          </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {fields.map((field, index) => (
-                <Card key={field.id} className="bg-white">
-                  <CardHeader>
-                    <CardTitle className="text-xl">
-                      Participant {index + 1}
+    const removeParticipant = (index: number) => {
+        setParticipants(participants.filter((_, i) => i !== index));
+    };
+
+    const updateParticipant = (index: number, field: string, value: string) => {
+        const newParticipants = [...participants];
+        newParticipants[index] = { ...newParticipants[index], [field]: value };
+        setParticipants(newParticipants);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const formData = isTeamSport(selectedCategory) 
+            ? {
+                name: teamName,
+                desasiswa: teamDesasiswa,
+                participants
+              }
+            : participants[0];
+        console.log('Submitted:', formData);
+        //Submit the form data to the database
+        try{
+          const response = await fetch('/api/organizer/registration', {
+            method: 'POST',
+            body: JSON.stringify(formData),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          if (!response.ok) {
+            throw new Error('Failed to submit registration');
+          }
+        }
+
+        catch(e){
+          console.log('Error:', e);
+        }
+
+        toast({
+            title: 'Success',
+            description: 'Registration submitted successfully',
+        });
+        //Reset the form
+        setSelectedSport('');
+        setSelectedCategory('');
+        setParticipants([{ name: '', matricNo: '', desasiswa: '' }]);
+        setTeamName('');
+        setTeamDesasiswa('');
+    };
+
+    return (
+        <div className="container mx-auto p-6">
+            <Card className="max-w-2xl mx-auto">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        {isTeamSport(selectedCategory) ? <Users className="h-6 w-6" /> : <User className="h-6 w-6" />}
+                        Sports Registration Form
                     </CardTitle>
-                  </CardHeader>
-                  <CardContent className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name={`registrants.${index}.sport`}
-                      render={({ field: inputField }) => (
-                        <FormItem>
-                          <FormLabel>Event</FormLabel>
-                          <Select 
-                            onValueChange={inputField.onChange} 
-                            defaultValue={inputField.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select an event" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="football">Football</SelectItem>
-                              <SelectItem value="netball">Netball</SelectItem>
-                              <SelectItem value="badminton">Badminton</SelectItem>
-                              <SelectItem value="futsal">Futsal</SelectItem>
-                              <SelectItem value="volleyball">Volleyball</SelectItem>
-                              <SelectItem value="petanque">Petanque</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="grid gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="sport">Sport</Label>
+                                <Select 
+                                    onValueChange={value => {
+                                        setSelectedSport(value);
+                                        setSelectedCategory('');
+                                    }}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a sport" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {SPORTS_LIST.map(sport => (
+                                            <SelectItem key={sport} value={sport}>
+                                                {sport}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
 
-                    <FormField
-                      control={form.control}
-                      name={`registrants.${index}.desasiswa`}
-                      render={({ field: inputField }) => (
-                        <FormItem>
-                          <FormLabel>Desasiswa</FormLabel>
-                          <Select 
-                            onValueChange={inputField.onChange} 
-                            defaultValue={inputField.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a desasiswa" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="Desasiswa Tekun">Desasiswa Tekun</SelectItem>
-                              <SelectItem value="Desasiswa Restu">Desasiswa Restu</SelectItem>
-                              <SelectItem value="Desasiswa Saujana">Desasiswa Saujana</SelectItem>
-                              <SelectItem value="Desasiswa Indah Kembara">Desasiswa Indah Kembara</SelectItem>
-                              <SelectItem value="Desasiswa Aman Damai">Desasiswa Aman Damai</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                            {selectedSport && (
+                                <div className="grid gap-2">
+                                    <Label htmlFor="category">Category</Label>
+                                    <Select 
+                                        onValueChange={setSelectedCategory}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {getCategoriesForSport(selectedSport).map(category => (
+                                                <SelectItem key={category} value={category}>
+                                                    {category}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
 
-                    <FormField
-                      control={form.control}
-                      name={`registrants.${index}.name`}
-                      render={({ field: inputField }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input {...inputField} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                            {selectedCategory && isTeamSport(selectedCategory) && (
+                                <div className="space-y-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="teamName">Team Name</Label>
+                                        <Input
+                                            id="teamName"
+                                            value={teamName}
+                                            onChange={(e) => setTeamName(e.target.value)}
+                                            placeholder="Enter team name"
+                                        />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="teamDesasiswa">Team Desasiswa</Label>
+                                        <Select 
+                                            onValueChange={setTeamDesasiswa}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a desasiswa" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {DESASISWA_LIST.map(desasiswa => (
+                                                    <SelectItem key={desasiswa} value={desasiswa}>
+                                                        {desasiswa}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            )}
 
-                    <FormField
-                      control={form.control}
-                      name={`registrants.${index}.matricNumber`}
-                      render={({ field: inputField }) => (
-                        <FormItem>
-                          <FormLabel>Matric Number</FormLabel>
-                          <FormControl>
-                            <Input {...inputField} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                            {selectedCategory && (
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <Label>Participants</Label>
+                                        {isTeamSport(selectedCategory) && (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={addParticipant}
+                                                className="flex items-center gap-2"
+                                            >
+                                                <Plus className="h-4 w-4" /> Add Participant
+                                            </Button>
+                                        )}
+                                    </div>
+                                    
+                                    {participants.map((participant, index) => (
+                                        <div key={index} className="space-y-4 p-4 border rounded-lg">
+                                            <div className="flex justify-between items-center">
+                                                <Label>Participant {index + 1}</Label>
+                                                {isTeamSport(selectedCategory) && participants.length > 1 && (
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => removeParticipant(index)}
+                                                    >
+                                                        <Trash2 className="h-4 w-4 text-red-500" />
+                                                    </Button>
+                                                )}
+                                            </div>
+                                            <div className="grid gap-4">
+                                                <div className="grid gap-2">
+                                                    <Label>Name</Label>
+                                                    <Input
+                                                        value={participant.name}
+                                                        onChange={(e) => updateParticipant(index, 'name', e.target.value)}
+                                                        placeholder="Enter participant name"
+                                                    />
+                                                </div>
+                                                <div className="grid gap-2">
+                                                    <Label>Matric No</Label>
+                                                    <Input
+                                                        value={participant.matricNo}
+                                                        onChange={(e) => updateParticipant(index, 'matricNo', e.target.value)}
+                                                        placeholder="Enter matric number"
+                                                    />
+                                                </div>
+                                                {!isTeamSport(selectedCategory) && (
+                                                    <div className="grid gap-2">
+                                                        <Label>Desasiswa</Label>
+                                                        <Select 
+                                                            onValueChange={(value) => updateParticipant(index, 'desasiswa', value)}
+                                                        >
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder="Select a desasiswa" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                {DESASISWA_LIST.map(desasiswa => (
+                                                                    <SelectItem key={desasiswa} value={desasiswa}>
+                                                                        {desasiswa}
+                                                                    </SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
 
-                    <FormField
-                      control={form.control}
-                      name={`registrants.${index}.school`}
-                      render={({ field: inputField }) => (
-                        <FormItem>
-                          <FormLabel>School</FormLabel>
-                          <FormControl>
-                            <Input {...inputField} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {fields.length > 1 && (
-                      <div className="col-span-2 mt-4">
-                        <Button 
-                          type="button" 
-                          variant="destructive" 
-                          onClick={() => remove(index)}
-                        >
-                          Remove Registrant
-                        </Button>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-
-              <div className="flex space-x-4">
-                <Button 
-                  type="button" 
-                  onClick={() => append({ 
-                    sport: '', 
-                    desasiswa: '', 
-                    name: '', 
-                    matricNumber: '', 
-                    school: '' 
-                  })}
-                >
-                  Add Registrant
-                </Button>
-                <Button type="submit">Submit</Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
-  );
+                        {selectedCategory && (
+                            <Button type="submit" className="w-full">
+                                Submit Registration
+                            </Button>
+                        )}
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
+    );
 };
 
-export default RegistrationPage;
+export default RegistrationForm;

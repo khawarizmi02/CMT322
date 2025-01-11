@@ -77,6 +77,28 @@ export class Firestore{
         console.log(matches);
         return matches;
     }
+
+    async addParticipant(data: matchesParticipant){
+        try{
+            const docRef = await addDoc(collection(db, "participants"), data);
+            console.log("Document written with ID: ", docRef.id);
+        } catch(e){
+            console.error("Error adding document: ", e);
+        }
+    }
+
+    async addTeam(data: matchesTeam){
+        try{
+            const docRef = await addDoc(collection(db, "teams"), {
+                teamName: data.name,
+                desasiswa: data.desasiswa,
+                participants: data.participants
+            });
+            console.log("Document written with ID: ", docRef.id);
+        } catch(e){
+            console.error("Error adding document: ", e);
+        }
+    }
 }
 
 const firestore = new Firestore();
