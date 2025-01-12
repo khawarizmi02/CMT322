@@ -27,22 +27,22 @@ import { Button } from '@/components/ui/button';
 const menuItems = [
   {
     title: 'Home',
-    url: '/organizer',
+    url: '/',
     icon: Home,
   },
   {
     title: 'Sports',
-    url: '/organizer/sports',
+    url: '/sports',
     icon: Trophy,
   },
   {
     title: 'News',
-    url: '/organizer/news',
+    url: '/news',
     icon: Newspaper,
   },
   {
     title: 'Registration',
-    url: '/organizer/registration',
+    url: '/registration',
     icon: UserPlus,
   },
 ];
