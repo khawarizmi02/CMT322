@@ -28,8 +28,15 @@ import {
 } from "@/components/ui/alert";
 import DeleteConfirmPopup from "@/components/deleteComfirmPopup";
 import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 const SportPage = () => {
+  const router = useRouter();
+  
+  const handleViewMatch = (sportCategoryId: string) => {
+    router.push(`/sports/matches?sportCategoryID=${sportCategoryId}`);
+  };
+
   const [sportCategories, setSportCategories] = useState<sportCategory[]>([]);
   const [sportsList, setSportsList] = useState<sports[]>([]);
   const [showSportModal, setShowSportModal] = useState<boolean>(false);
@@ -276,7 +283,7 @@ const SportPage = () => {
           </CardContent>
         </Card>
       ) : (
-        <Tabs defaultValue={Object.keys(groupedCategories)[0]} className="w-full">
+        <Tabs defaultValue={Object.keys(groupedCategories)[0] || ''} className="w-full">
           <TabsList className="mb-8 flex-wrap h-auto py-2">
             {Object.keys(groupedCategories).map((sportName) => (
               <TabsTrigger key={sportName} value={sportName} className="gap-2">
@@ -285,12 +292,12 @@ const SportPage = () => {
               </TabsTrigger>
             ))}
           </TabsList>
-
+          
           {Object.entries(groupedCategories).map(([sportName, categories]) => (
             <TabsContent key={sportName} value={sportName}>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {categories.map((category) => (
-                  <Card key={category.sportCategoryID} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <Card key={category.sportCategoryID} className="overflow-hidden hover:shadow-lg transition-shadow" onClick={() => category.sportCategoryID && handleViewMatch(category.sportCategoryID)}>
                     {category.imageUrl && (
                       <div className="relative h-48 overflow-hidden">
                         <img

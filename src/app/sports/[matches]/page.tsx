@@ -1,349 +1,196 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Calendar, MapPin, PenSquare, Plus, Trophy, Users } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useUser } from '@clerk/nextjs';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  Trophy,
-  Users,
-  Filter,
-  User,
-  Loader2
-} from 'lucide-react';
-import { matches } from '@/data/type/index';
-import EditMatches from '@/components/editMatches';
-import firestore from '@/lib/firebase/firestore';
 
-const MatchesPage = () => {
+export default function MatchesPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const urlCategory = searchParams.get('category');
-  const sportName = window.location.pathname.split('/').pop();
+  const sportCategoryID = searchParams.get('sportCategoryID');
+  
+  const { isSignedIn } = useUser();
 
-  const [matches, setMatches] = useState<matches[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState(urlCategory || 'All Categories');
-  const [filteredMatches, setFilteredMatches] = useState<matches[]>([]);
+  const matches = [
+    {
+      id: '1',
+      sportCategoryID: 'Lp9pK4ZbTS4DBOrfydiM',
+      date: '2025-01-15',
+      time: '15:00',
+      venue: 'Stadium A',
+      status: 'ongoing',
+      category: 'Men\'s Volleyball',
+      teams: ['Team A', 'Team B'],
+      participants: ['AAA', 'BBB', 'CCC', 'DDD', 'EEE', 'FFF', 'GGG', 'HHH'],
+      resultId: 'R001',
+    },
+    {
+      id: '2',
+      sportCategoryID: 'Lp9pK4ZbTS4DBOrfydiM',
+      date: '2025-01-16',
+      time: '18:00',
+      venue: 'Arena B',
+      status: 'upcoming',
+      category: 'Men\'s Volleyball',
+      teams: ['Team X', 'Team Y'],
+      participants: ['Ali', 'Chong', 'Raju', 'John', 'Mike', 'Kim', 'Faizal', 'Shah'],
+      resultId: 'R002',
+    },
+    {
+      id: '3',
+      sportCategoryID: 'czaOVNAQOAKZSSubskF9',
+      date: '2025-01-17',
+      time: '12:00',
+      venue: 'Court C',
+      status: 'ongoing',
+      category: 'Women\'s Volleyball',
+      teams: ['Team Alpha', 'Team Beta'],
+      participants: ['Player 1', 'Player 2', 'Player 3', 'Player 4', 'Player 5', 'Player 6', 'Player 7', 'Player 8'],
+      resultId: 'R003',
+    },
+    {
+      id: '4',
+      sportCategoryID: 'czaOVNAQOAKZSSubskF9',
+      date: '2025-01-20',
+      time: '10:00',
+      venue: 'Hall D',
+      status: 'ongoing',
+      category: 'Women\'s Volleyball',
+      teams: ['Team Charlotte', 'Team Delta'],
+      participants: ['Player a', 'Player b', 'Player c', 'Player d', 'Player e', 'Player f', 'Player g', 'Player h'],
+      resultId: 'R004',
+    },
+  ];
 
-  // Fetch matches data
-  useEffect(() => {
-    const fetchMatches = async () => {
-      try {
-        setLoading(true);
-        const data = await firestore.readMatches();
-        
-        // First filter to only include matches of the selected sport
-        const sportMatches = data.filter(match => 
-          match.sportName.toLowerCase() === sportName?.toLowerCase()
-        );
-        
-        setMatches(sportMatches);
-        
-        // Apply category filtering if provided in URL
-        let filtered = [...sportMatches];
-        if (urlCategory) {
-          filtered = filtered.filter(match => 
-            match.sportCategory === urlCategory
-          );
-        }
-        setFilteredMatches(filtered);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const filteredMatches = matches.filter(match => match.sportCategoryID === sportCategoryID);
 
-    fetchMatches();
-  }, [sportName, urlCategory]);
+  const currentMatches = filteredMatches.filter(match => match.status === 'ongoing');
+  const upcomingMatches = filteredMatches.filter(match => match.status === 'upcoming');
+  const pastMatches = filteredMatches.filter(match => match.status === 'past');
 
-  // Extract unique categories for the current sport only
-  const categories = ['All Categories', ...new Set(matches.map(match => match.sportCategory))];
-
-  // Filter matches based on selected category
-  useEffect(() => {
-    let filtered = [...matches];
-    
-    if (selectedCategory !== 'All Categories') {
-      filtered = filtered.filter(match => match.sportCategory === selectedCategory);
-    }
-    
-    setFilteredMatches(filtered);
-  }, [selectedCategory, matches]);
-
-  // Group matches by status
-  const upcomingMatches = filteredMatches.filter(match => match.matchStatus === 'upcoming');
-  const ongoingMatches = filteredMatches.filter(match => match.matchStatus === 'ongoing');
-  const completedMatches = filteredMatches.filter(match => match.matchStatus === 'completed');
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'upcoming':
-        return 'bg-blue-500';
-      case 'ongoing':
-        return 'bg-green-500';
-      case 'completed':
-        return 'bg-gray-500';
-      default:
-        return 'bg-gray-500';
-    }
-  };
-
-  const MatchCard = ({ match }: { match: matches }) => (
-    <Card className="mb-4 hover:shadow-lg transition-shadow duration-200">
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <Badge variant="outline">{match.sportName}</Badge>
-              <Badge variant="secondary">{match.sportCategory}</Badge>
-              <span className={`inline-block w-2 h-2 rounded-full ${getStatusColor(match.matchStatus || '')}`} />
+  const MatchCard = ({ match }: { match: typeof matches[0] }) => (
+    <Card className="mb-4 hover:shadow-md transition-shadow">
+      <CardContent className="p-6">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-2 h-2 bg-green-500 rounded-full" />
+              <span className="text-sm text-gray-600">{match.category}</span>
             </div>
+            <h3 className="text-2xl font-bold mb-4">
+              {match.teams[0]} <span className="text-gray-400">vs</span> {match.teams[1]}
+            </h3>
           </div>
-          <Badge className={`${getStatusColor(match.matchStatus || '')} text-white`}>
-            {(match.matchStatus ?? '').charAt(0).toUpperCase() + (match.matchStatus ?? '').slice(1)}
-          </Badge>
-          <EditMatches match={match} />
+          <Button variant="ghost" size="icon">
+            <PenSquare className="h-4 w-4" />
+          </Button>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {/* Teams/Participants Section */}
-          <div className="flex items-center justify-between">
-            <div className="flex-1 text-center">
-              {match.teams?.length ? (
-                <div className="flex items-center gap-2 justify-center">
-                  <Users className="h-4 w-4" />
-                  <div>
-                    <span className="font-medium">{match.teams[0].name}</span>
-                    <p className="text-sm text-muted-foreground">{match.teams[0].desasiswa}</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 justify-center">
-                  <User className="h-4 w-4" />
-                  <div>
-                    <span className="font-medium">{match.participants?.[0]?.name}</span>
-                    <p className="text-sm text-muted-foreground">{match.participants?.[0]?.desasiswa}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="mx-4 text-xl font-bold text-muted-foreground">VS</div>
-            <div className="flex-1 text-center">
-              {match.teams?.length ? (
-                <div className="flex items-center gap-2 justify-center">
-                  <Users className="h-4 w-4" />
-                  <div>
-                    <span className="font-medium">{match.teams[1].name}</span>
-                    <p className="text-sm text-muted-foreground">{match.teams[1].desasiswa}</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 justify-center">
-                  <User className="h-4 w-4" />
-                  <div>
-                    <span className="font-medium">{match.participants?.[1]?.name}</span>
-                    <p className="text-sm text-muted-foreground">{match.participants?.[1]?.desasiswa}</p>
-                  </div>
-                </div>
-              )}
-            </div>
+        
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-gray-600">
+            <Calendar className="h-4 w-4" />
+            <span>{match.date}</span>
+            <span className="text-gray-400">|</span>
+            <span>{match.time}</span>
           </div>
-
-          {/* Match Details */}
-          <div className="grid grid-cols-3 gap-4 pt-4 border-t">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-              {match.matchDate}
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              {match.matchTime}
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <MapPin className="h-4 w-4" />
-              {match.matchVenue}
-            </div>
+          <div className="flex items-center gap-2 text-gray-600">
+            <MapPin className="h-4 w-4" />
+            <span>{match.venue}</span>
           </div>
-
-          {match.matchStatus === 'completed' && match.matchScore && (
-            <div className="flex items-center justify-center gap-2 pt-2 text-lg font-semibold">
-              <Trophy className="h-5 w-5 text-yellow-500" />
-              {match.matchScore}
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>
   );
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
-          <p className="text-lg font-medium">Loading matches...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <p className="text-lg font-medium text-red-500">Error: {error}</p>
-          <p className="text-muted-foreground mt-2">Please try refreshing the page</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Add check for no matches for the current sport
-  if (matches.length === 0) {
-    return (
-      <div className="container mx-auto p-6 max-w-7xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">
-            {sportName?.charAt(0).toUpperCase()}{sportName?.slice(1)} Matches
-          </h1>
+  return (
+    <div className="container mx-auto p-6 space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-bold tracking-tight">Matches</h1>
+          <p className="text-muted-foreground">View Available Matches of the xxxxx Category</p>
         </div>
         
-        <Card className="w-full p-8">
-          <CardContent className="flex flex-col items-center justify-center space-y-4 pt-6">
-            <div className="rounded-full bg-primary/10 p-6">
-              <Calendar className="h-12 w-12 text-primary" />
-            </div>
-            <h2 className="text-2xl font-semibold text-center">No Matches Available</h2>
-            <p className="text-muted-foreground text-center max-w-sm">
-              There are currently no matches scheduled for {sportName}. Please check back later for updates.
-            </p>
-            <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              <span>Matches will be added soon</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  return (
-    <div className="container mx-auto p-6 max-w-7xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">
-          {sportName?.charAt(0).toUpperCase()}{sportName?.slice(1)} Matches
-        </h1>
-        <p className="text-muted-foreground">
-          {selectedCategory !== 'All Categories' 
-            ? `Viewing ${selectedCategory} matches`
-            : `View and track all ${sportName} matches`}
-        </p>
+        {isSignedIn && (
+          <Button
+          // onClick={() => setShowSportModal(true)}
+          variant="default"
+          className="gap-2"
+        >
+          <Plus className="w-4 h-4" />
+          {/* Add NewMatches */}
+          Add New Matches for {sportCategoryID}
+        </Button>
+        )}
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-6">
-        <div className="flex items-center gap-2 bg-secondary/50 p-2 rounded-lg">
-          <Filter className="h-5 w-5 text-muted-foreground" />
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-[180px] border-none bg-transparent">
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <Tabs defaultValue="ongoing" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="ongoing" className="flex gap-2">
-            Ongoing
-            <Badge variant="secondary">{ongoingMatches.length}</Badge>
+      <Tabs defaultValue="current" className="w-full mx-auto">
+        <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsTrigger value="current" className="text-base">
+            Current Matches{' '}
+            <Badge variant="secondary" className="ml-2 bg-orange-100">
+              {currentMatches.length}
+            </Badge>
           </TabsTrigger>
-          <TabsTrigger value="upcoming" className="flex gap-2">
-            Upcoming
-            <Badge variant="secondary">{upcomingMatches.length}</Badge>
+          <TabsTrigger value="upcoming" className="text-base">
+            Upcoming Matches{' '}
+            <Badge variant="secondary" className="ml-2 bg-orange-100">
+              {upcomingMatches.length}
+            </Badge>
           </TabsTrigger>
-          <TabsTrigger value="completed" className="flex gap-2">
-            Completed
-            <Badge variant="secondary">{completedMatches.length}</Badge>
+          <TabsTrigger value="past" className="text-base">
+            Past Matches{' '}
+            <Badge variant="secondary" className="ml-2 bg-orange-100">
+              {pastMatches.length}
+            </Badge>
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="ongoing">
-          <ScrollArea className="h-[600px]">
-            {ongoingMatches.length > 0 ? (
-              ongoingMatches.map((match) => (
-                <MatchCard key={match.matchID} match={match} />
-              ))
-            ) : (
-              <div className="text-center py-8">
-                <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-lg font-medium">No ongoing matches</p>
-                <p className="text-sm text-muted-foreground">Check back later for live matches</p>
-              </div>
-            )}
-          </ScrollArea>
+        <TabsContent value="current" className="space-y-4">
+          {currentMatches.length > 0 ? (
+            currentMatches.map(match => (
+              <MatchCard key={match.id} match={match} />
+            ))
+          ) : (
+            <Card>
+              <CardContent className="p-6 text-center text-gray-500">
+                No current matches available
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
-        <TabsContent value="upcoming">
-          <ScrollArea className="h-[600px]">
-            {upcomingMatches.length > 0 ? (
-              upcomingMatches.map((match) => (
-                <MatchCard key={match.matchID} match={match} />
-              ))
-            ) : (
-              <div className="text-center py-8">
-                <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-lg font-medium">No upcoming matches</p>
-                <p className="text-sm text-muted-foreground">Stay tuned for future match schedules</p>
-              </div>
-            )}
-          </ScrollArea>
+        <TabsContent value="upcoming" className="space-y-4">
+          {upcomingMatches.length > 0 ? (
+            upcomingMatches.map(match => (
+              <MatchCard key={match.id} match={match} />
+            ))
+          ) : (
+            <Card>
+              <CardContent className="p-6 text-center text-gray-500">
+                No upcoming matches scheduled
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
-        <TabsContent value="completed">
-          <ScrollArea className="h-[600px]">
-            {completedMatches.length > 0 ? (
-              completedMatches.map((match) => (
-                <MatchCard key={match.matchID} match={match} />
-              ))
-            ) : (
-              <div className="text-center py-8">
-                <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-lg font-medium">No completed matches</p>
-                <p className="text-sm text-muted-foreground">Match history will appear here</p>
-              </div>
-            )}
-          </ScrollArea>
+        <TabsContent value="past" className="space-y-4">
+          {pastMatches.length > 0 ? (
+            pastMatches.map(match => (
+              <MatchCard key={match.id} match={match} />
+            ))
+          ) : (
+            <Card>
+              <CardContent className="p-6 text-center text-gray-500">
+                No past matches found
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
     </div>
   );
-};
-
-export default MatchesPage;
+}
