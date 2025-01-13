@@ -52,7 +52,7 @@ const SportPage = () => {
   const readSportCategory = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/organizer/sport-page", {
+      const response = await fetch("/api/sport-page", {
         method: "GET",
       });
       const data = await response.json();
@@ -67,7 +67,7 @@ const SportPage = () => {
   const readUniqueSport = async () => {
     try {
       // Read all sports available first
-      const response = await fetch("/api/organizer/sports", {
+      const response = await fetch("/api/sports", {
         method: "GET",
       });
       const data = await response.json();
@@ -84,7 +84,7 @@ const SportPage = () => {
 
   const handleAddSport = async (newSport: sports) => {
     try {
-      const response = await fetch("/api/organizer/sports", {
+      const response = await fetch("/api/sports", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -111,7 +111,7 @@ const SportPage = () => {
 
   const handleAddSportCategory = async (newSportCategory: sportCategory, sportID: string) => {
     try {
-      const response = await fetch(`/api/organizer/sport-category`, {
+      const response = await fetch(`/api/sport-category`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -139,7 +139,7 @@ const SportPage = () => {
 
   const handleDeleteSportCategory = async (sportCategoryID: string) => {
     try {
-      const response = await fetch(`/api/organizer/sport-category`, {
+      const response = await fetch(`/api/sport-category`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -166,7 +166,7 @@ const SportPage = () => {
 
   const handleDeleteSport= async (sportID: string) => {
     try {
-      const response = await fetch(`/api/organizer/sports`, {
+      const response = await fetch(`/api/sports`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
