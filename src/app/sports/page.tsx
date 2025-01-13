@@ -20,12 +20,6 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Alert,
-  AlertTitle,
-  AlertDescription,
-} from "@/components/ui/alert";
 import DeleteConfirmPopup from "@/components/deleteComfirmPopup";
 import { toast } from "@/hooks/use-toast";
 
