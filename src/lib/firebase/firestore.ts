@@ -22,6 +22,8 @@ import {
 } from '@/data/type/index';
 import { get } from 'http';
 import { read } from 'fs';
+import { get } from 'http';
+import { read } from 'fs';
 import { Session } from 'inspector/promises';
 
 export class Firestore{
@@ -109,17 +111,16 @@ export class Firestore{
         }
       }
 
-  /* MATCHES MODULE */
-  //Run once to import the matcehs data
-  async importMatchesData() {
-    const matches = require('@/data/matches.json');
-    console.log(matches);
-    for (const match of matches) {
-      const { sportID, ...matchData } = match;
-      const docRef = await addDoc(collection(db, 'matches'), matchData);
-      console.log('Document written with ID: ', docRef.id);
+    //Run once to import the matcehs data
+    async importMatchesData(){
+        const matches = require('@/data/matches.json');
+        console.log(matches);
+        for (const match of matches){
+            const { sportID, ...matchData } = match;
+            const docRef = await addDoc(collection(db, "matches"), matchData);
+            console.log("Document written with ID: ", docRef.id);
+        }
     }
-  }
 
   async createMatches(data: matches) {
     try {
