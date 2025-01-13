@@ -13,59 +13,109 @@ import {
   deleteDoc,
 } from 'firebase/firestore';
 import {
-  sports,
+  sports, sportCategory,
   matches,
   matchesParticipant,
   matchesTeam,
   sessions,
   SessionEvent,
 } from '@/data/type/index';
-import { Session } from 'inspector/promises';
 
-export class Firestore {
-  /* SPORTS MODULE */
-  // add sports data
-  async addSportsData(data: sports) {
-    try {
-      const docRef = await addDoc(collection(db, 'sports'), data);
-      console.log('Document written with ID: ', docRef.id);
-    } catch (e) {
-      console.error('Error adding document: ', e);
+export class Firestore{
+    //add sports data
+    async addSportsData(data: sports){
+        try{
+            const docRef = await addDoc(collection(db, "sports"), {
+                sportName: data.sportName
+            });
+            console.log("Document written with ID: ", docRef.id);
+            return docRef.id;
+        } catch(e){
+            console.error("Error adding document: ", e);
+        }
     }
-  }
 
-  async deleteSportsData(sportID: string) {
-    await deleteDoc(doc(db, 'sports', sportID));
-    console.log('Document with ID: ', sportID, ' deleted');
-  }
-
-  //read sports data
-  async readSportsData() {
-    const sports: sports[] = [];
-    const querySnapshot = await getDocs(collection(db, 'sports'));
-    querySnapshot.forEach((doc) => {
-      sports.push({
-        sportID: doc.id,
-        sportName: doc.data().sportName,
-        sportCategory: doc.data().sportCategory,
-        phase: doc.data().phase,
-      });
-    });
-    console.log(sports);
-    return sports;
-  }
-
-  /* MATCHES MODULE */
-  //Run once to import the matcehs data
-  async importMatchesData() {
-    const matches = require('@/data/matches.json');
-    console.log(matches);
-    for (const match of matches) {
-      const { sportID, ...matchData } = match;
-      const docRef = await addDoc(collection(db, 'matches'), matchData);
-      console.log('Document written with ID: ', docRef.id);
+    async addSportCategory(data: sportCategory, sportID: string){
+        try{
+            const docRef = await addDoc(collection(db, "category"), {
+                sportCategoryName: data.sportCategoryName,
+                imageUrl: data.imageUrl || '',
+                sportRef: doc(db, "sports", sportID),
+                goldMedal: '',
+                silverMedal: '',
+                bronzeMedal: ''
+            });
+            console.log("Document written with ID: ", docRef.id);
+            return docRef.id;
+        } catch(e){
+            console.error("Error adding document: ", e);
+        }
     }
-  }
+
+    async deleteSportsData(sportID: string){
+        await deleteDoc(doc(db, "sports", sportID));
+        console.log("Document with ID: ", sportID, " deleted");
+    }
+
+    async deleteSportCategory(sportCategoryID: string){
+        await deleteDoc(doc(db, "category", sportCategoryID));
+        console.log("Document with ID: ", sportCategoryID, " deleted");
+    }
+
+    //read sports data
+    async readSportsData(){
+        const sports: sports[] = [];
+        const querySnapshot = await getDocs(collection(db, "sports"));
+        querySnapshot.forEach((doc) => {
+            sports.push({
+                sportID: doc.id,
+                sportName: doc.data().sportName
+            });
+        });
+        console.log(sports);
+        return sports;
+    }
+
+    //read sports category data
+    async readSportCategory() {
+        try {
+          const querySnapshot = await getDocs(collection(db, "category"));
+      
+          // Use Promise.all to handle async operations
+          const sportCategory = await Promise.all(
+            querySnapshot.docs.map(async (doc) => {
+              const sportSnap = await getDoc(doc.data().sportRef);
+              return {
+                sportCategoryID: doc.id,
+                sportName: (sportSnap.data() as sports)?.sportName || "Unknown Sport",
+                sportCategoryName: doc.data().sportCategoryName,
+                sportRef: doc.data().sportRef,
+                imageUrl: doc.data().imageUrl,
+                goldMedal: doc.data().goldMedal,
+                silverMedal: doc.data().silverMedal,
+                bronzeMedal: doc.data().bronzeMedal,
+              };
+            })
+          );
+      
+          console.log(sportCategory); // Debugging log
+          return sportCategory;
+        } catch (error) {
+          console.error("Error fetching sport categories: ", error);
+          return [];
+        }
+      }
+
+    //Run once to import the matcehs data
+    async importMatchesData(){
+        const matches = require('@/data/matches.json');
+        console.log(matches);
+        for (const match of matches){
+            const { sportID, ...matchData } = match;
+            const docRef = await addDoc(collection(db, "matches"), matchData);
+            console.log("Document written with ID: ", docRef.id);
+        }
+    }
 
   async createMatches(data: matches) {
     try {

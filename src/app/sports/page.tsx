@@ -1,312 +1,380 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
-import {
-  Trophy,
-  Medal,
-  Timer,
-  Dumbbell,
-  Users,
-  Target,
-  CircleDot,
-  Flag,
-  ChevronDown,
-  ChevronUp,
-} from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { Loader, Plus, Trophy, Medal, Trash, Award, Activity, X } from "lucide-react";
+import { sports, sportCategory } from "@/data/type/index";
+import AddSportsModal from "@/components/addSportsModal";
+import AddSportCategoryModal from "@/components/addSportCategoryModal";
+import { useUser } from "@clerk/nextjs";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import firestore from '@/lib/firebase/firestore';
-import { sports } from '@/data/type';
-import AddSportsButton from '@/components/addSportsButton';
-import DeleteSportButton from '@/components/deleteSportsButton';
-import { toast } from '@/hooks/use-toast';
+  CardDescription,
+} from "@/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Alert,
+  AlertTitle,
+  AlertDescription,
+} from "@/components/ui/alert";
+import DeleteConfirmPopup from "@/components/deleteComfirmPopup";
+import { toast } from "@/hooks/use-toast";
 
-export default function Sports() {
-  const router = useRouter();
-  const [sports, setSports] = useState<sports[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [expandedSports, setExpandedSports] = useState<{
-    [key: string]: boolean;
-  }>({});
-  const [activeTab, setActiveTab] = useState<string>('1');
+const SportPage = () => {
+  const [sportCategories, setSportCategories] = useState<sportCategory[]>([]);
+  const [sportsList, setSportsList] = useState<sports[]>([]);
+  const [showSportModal, setShowSportModal] = useState<boolean>(false);
+  const [showCategoryModal, setShowCategoryModal] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ 
+    show: boolean; 
+    id: string | null; 
+    type: 'sport' | 'category';
+    name: string; 
+  }>({
+    show: false,
+    id: null,
+    type: 'sport',
+    name: ''
+  });
 
   const { isSignedIn } = useUser();
-  console.log(isSignedIn);
 
-  useEffect(() => {
-    fetchSports();
-  }, []);
-
-  const fetchSports = async () => {
+  const readSportCategory = async () => {
+    setLoading(true);
     try {
-      const response = await fetch('/api/sport');
-      const body = await response.json();
-      const sportsData = body.sports;
-      setSports(sportsData);
-
-      // Initialize expanded state for all sports
-      const initialExpandedState: { [key: string]: boolean } = {};
-      sportsData.forEach((sport: { sportName: string | number }) => {
-        initialExpandedState[sport.sportName] = true; // Start expanded
+      const response = await fetch("/api/organizer/sport-page", {
+        method: "GET",
       });
-      setExpandedSports(initialExpandedState);
-    } catch (err) {
-      setError('Failed to fetch sports data');
-      console.error('Error:', err);
-    } finally {
-      setLoading(false);
+      const data = await response.json();
+      setSportCategories(data.sportCategory);
+    } catch (error) {
+      console.error("Error reading sport categories:", error);
     }
+    readUniqueSport();
+    setLoading(false);
   };
 
-  const getSportIcon = (sportName: string) => {
-    const iconProps = { className: 'w-6 h-6' };
-    const lowercaseSport = sportName.toLowerCase();
-
-    switch (true) {
-      case lowercaseSport.includes('badminton'):
-        return <Target {...iconProps} />;
-      case lowercaseSport.includes('volleyball'):
-        return <Users {...iconProps} />;
-      case lowercaseSport.includes('track'):
-        return <Flag {...iconProps} />;
-      case lowercaseSport.includes('athletics'):
-        return <CircleDot {...iconProps} />;
-      default:
-        return <Dumbbell {...iconProps} />;
-    }
-  };
-
-  const getPhaseIcon = (phase: number) => {
-    switch (phase) {
-      case 1:
-        return <Trophy className="w-4 h-4" />;
-      case 2:
-        return <Medal className="w-4 h-4" />;
-      case 3:
-        return <Timer className="w-4 h-4" />;
-      default:
-        return null;
-    }
-  };
-
-  const toggleSportExpansion = (sportName: string) => {
-    setExpandedSports((prev) => ({
-      ...prev,
-      [sportName]: !prev[sportName],
-    }));
-  };
-
-  const groupSportsByName = (phase: number) => {
-    const phaseSports = sports.filter((sport) => sport.phase === phase);
-    const grouped = phaseSports.reduce(
-      (acc, sport) => {
-        if (!acc[sport.sportName]) {
-          acc[sport.sportName] = [];
-        }
-        acc[sport.sportName].push(sport);
-        return acc;
-      },
-      {} as { [key: string]: sports[] }
-    );
-    return grouped;
-  };
-
-  const handleAddSport = async (sportData: Omit<sports, 'sportID'>) => {
+  const readUniqueSport = async () => {
     try {
-      const response = await fetch('/api/sport', {
-        method: 'POST',
+      // Read all sports available first
+      const response = await fetch("/api/organizer/sports", {
+        method: "GET",
+      });
+      const data = await response.json();
+      // Get unique sports
+      const uniqueSports = data.sports.filter((sport: sports, index: number, self: sports[]) =>
+        index === self.findIndex((t) => t.sportName === sport.sportName)
+      );
+      console.log(uniqueSports);
+      setSportsList(uniqueSports);
+    } catch (error) {
+      console.error("Error reading sports:", error);
+    }
+  };
+
+  const handleAddSport = async (newSport: sports) => {
+    try {
+      const response = await fetch("/api/organizer/sports", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(sportData),
+        body: JSON.stringify(newSport),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to add sport');
+        throw new Error("Failed to create sport");
       }
-
-      toast({
-        title: 'Success',
-        description: 'Sport added successfully',
-      });
-
-      fetchSports();
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Sport has been created successfully",
+        });
+        readSportCategory(); // Refresh the sport categories list
+      } else {
+        alert("Failed to add new sport.");
+      }
     } catch (error) {
-      setError('Failed to add sport');
-      console.error('Error:', error);
+      console.error("Error adding new sport:", error);
     }
   };
 
-  const handleDeleteSport = async (sportID: string) => {
+  const handleAddSportCategory = async (newSportCategory: sportCategory, sportID: string) => {
     try {
-      const response = await fetch('/api/sport', {
-        method: 'DELETE',
+      const response = await fetch(`/api/organizer/sport-category`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+        },
+        // Add the sport ID to the request body
+        body: JSON.stringify({ newSportCategory, sportID }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add sport category");
+      }
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "New sport category added successfully!",
+        });
+        readSportCategory(); // Refresh the sport categories list
+      } else {
+        alert("Failed to add new sport category.");
+      }
+    } catch (error) {
+      console.error("Error adding new sport category:", error);
+    }
+  };
+
+  const handleDeleteSportCategory = async (sportCategoryID: string) => {
+    try {
+      const response = await fetch(`/api/organizer/sport-category`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sportCategoryID }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete sport");
+      }
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Sport category deleted successfully!",
+        });
+        readSportCategory(); // Refresh the sport categories list
+      } else {
+        alert("Failed to delete sport category.");
+      }
+    } catch (error) {
+      console.error("Error deleting sport category:", error);
+    }
+  };
+
+  const handleDeleteSport= async (sportID: string) => {
+    try {
+      const response = await fetch(`/api/organizer/sports`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ sportID }),
       });
 
-      toast({
-        title: 'Success',
-        description: 'Sport deleted successfully',
-      });
-
-      fetchSports(); // Refresh the list after deletion
+      if (!response.ok) {
+        throw new Error("Failed to delete sport");
+      }
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Sport deleted successfully!",
+        });
+        readSportCategory(); // Refresh the sport categories list
+      } else {
+        alert("Failed to delete sport.");
+      }
     } catch (error) {
-      setError('Failed to delete sport');
-      console.error('Error:', error);
+      console.error("Error deleting sport:", error);
     }
+  }
+
+  useEffect(() => {
+    readSportCategory();
+  }, []);
+
+  const confirmDelete = (id: string, type: 'sport' | 'category', name: string) => {
+    setDeleteConfirm({ show: true, id, type, name });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirm.id) return;
+    
+    if (deleteConfirm.type === 'sport') {
+      await handleDeleteSport(deleteConfirm.id);
+    } else {
+      await handleDeleteSportCategory(deleteConfirm.id);
+    }
+    
+    setDeleteConfirm({ show: false, id: null, type: 'sport', name: '' });
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#654321]"></div>
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <Loader className="w-12 h-12 animate-spin text-primary" />
+        <p className="text-muted-foreground">Loading sports data...</p>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Card className="w-96">
-          <CardHeader>
-            <CardTitle className="text-red-500">Error</CardTitle>
-            <CardDescription>{error}</CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
-    );
-  }
+  // Group sport categories by sport name
+  const groupedCategories = sportCategories.reduce((groups, category) => {
+    const sportName = category.sportName || "Unknown Sport";
+    if (!groups[sportName]) {
+      groups[sportName] = [];
+    }
+    groups[sportName].push(category);
+    return groups;
+  }, {} as Record<string, sportCategory[]>);
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="mb-8 flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-[#654321] mb-2">
-            SUKAD Sports Events
-          </h1>
-          <p className="text-gray-600">
-            Explore sports events across all phases of the competition
-          </p>
+    <div className="container mx-auto p-6 space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-bold tracking-tight">Sports Management</h1>
+          <p className="text-muted-foreground">Manage sports categories and medal assignments</p>
         </div>
         {isSignedIn && (
-          <AddSportsButton
-            currentPhase={parseInt(activeTab)}
-            onAddSport={handleAddSport}
-          />
+          <div className="flex gap-3">
+            <Button
+              onClick={() => setShowSportModal(true)}
+              variant="default"
+              className="gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Sport Management
+            </Button>
+            <Button
+              onClick={() => setShowCategoryModal(true)}
+              variant="secondary"
+              className="gap-2"
+            >
+              <Trophy className="w-4 h-4" />
+              Add Category
+            </Button>
+          </div>
         )}
       </div>
 
-      <Tabs
-        defaultValue="1"
-        className="w-full"
-        value={activeTab}
-        onValueChange={setActiveTab}
-      >
-        <TabsList className="grid w-full grid-cols-3 mb-8">
-          {[1, 2, 3].map((phase) => (
-            <TabsTrigger
-              key={phase}
-              value={phase.toString()}
-              className="flex items-center gap-2"
-            >
-              {getPhaseIcon(phase)}
-              Phase {phase}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+      {Object.keys(groupedCategories).length === 0 ? (
+        <Card className="w-full">
+          <CardContent className="flex flex-col items-center justify-center h-64">
+            <Activity className="w-12 h-12 text-muted-foreground mb-4" />
+            <p className="text-xl text-muted-foreground">No sport categories found</p>
+            {isSignedIn && (
+              <Button
+                onClick={() => setShowCategoryModal(true)}
+                variant="outline"
+                className="mt-4"
+              >
+                Add your first category
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <Tabs defaultValue={Object.keys(groupedCategories)[0]} className="w-full">
+          <TabsList className="mb-8 flex-wrap h-auto py-2">
+            {Object.keys(groupedCategories).map((sportName) => (
+              <TabsTrigger key={sportName} value={sportName} className="gap-2">
+                <Trophy className="w-4 h-4" />
+                {sportName}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-        {[1, 2, 3].map((phase) => (
-          <TabsContent key={phase} value={phase.toString()}>
-            <div className="grid grid-cols-1 gap-6">
-              {Object.entries(groupSportsByName(phase)).map(
-                ([sportName, sportCategories]) => (
-                  <Card key={sportName} className="overflow-hidden">
-                    <CardHeader
-                      className="cursor-pointer bg-[#654321]/5 hover:bg-[#654321]/10"
-                      onClick={() => toggleSportExpansion(sportName)}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-full bg-[#654321]/10">
-                            {getSportIcon(sportName)}
-                          </div>
-                          <CardTitle className="text-xl">{sportName}</CardTitle>
-                          <span className="text-sm text-gray-600">
-                            ({sportCategories.length}{' '}
-                            {sportCategories.length === 1
-                              ? 'category'
-                              : 'categories'}
-                            )
-                          </span>
-                        </div>
-                        {expandedSports[sportName] ? (
-                          <ChevronUp />
-                        ) : (
-                          <ChevronDown />
+          {Object.entries(groupedCategories).map(([sportName, categories]) => (
+            <TabsContent key={sportName} value={sportName}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {categories.map((category) => (
+                  <Card key={category.sportCategoryID} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    {category.imageUrl && (
+                      <div className="relative h-48 overflow-hidden">
+                        <img
+                          src={category.imageUrl}
+                          alt={category.sportCategoryName}
+                          className="w-full h-full object-cover transition-transform hover:scale-105"
+                        />
+                      </div>
+                    )}
+                    <CardHeader className="space-y-1">
+                      <div className="flex justify-between items-start">
+                        <CardTitle className="text-xl">{category.sportCategoryName}</CardTitle>
+                        {isSignedIn && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => category.sportCategoryID && confirmDelete(category.sportCategoryID, 'category', category.sportCategoryName)}
+                            className="text-destructive hover:text-destructive/90"
+                          >
+                            <Trash className="w-4 h-4" />
+                          </Button>
                         )}
                       </div>
+                      <CardDescription>{sportName}</CardDescription>
                     </CardHeader>
-                    {expandedSports[sportName] && (
-                      <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                        {sportCategories.map((sport) => (
-                          <div
-                            key={sport.sportID}
-                            className="p-4 rounded-lg border border-gray-200 hover:border-[#654321] hover:shadow-md transition-all cursor-pointer relative"
-                          >
-                            <div
-                              onClick={() =>
-                                router.push(
-                                  `/organizer/sports/${sport.sportName}?category=${sport.sportCategory}`
-                                )
-                              }
-                            >
-                              <h3 className="font-medium text-lg text-[#654321] pr-8">
-                                {sport.sportCategory}
-                              </h3>
-                              <p className="text-sm text-gray-600">
-                                Click to view details
-                              </p>
-                            </div>
-                            {sport.sportID && isSignedIn && (
-                              <DeleteSportButton
-                                sportID={sport.sportID}
-                                sportCategory={sport.sportCategory}
-                                onDelete={handleDeleteSport}
-                              />
-                            )}
-                          </div>
-                        ))}
-                      </CardContent>
-                    )}
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <Medal className="w-5 h-5 text-yellow-500" />
+                          <span className="text-sm">
+                            {category.goldMedal || "Not yet determined"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Medal className="w-5 h-5 text-gray-400" />
+                          <span className="text-sm">
+                            {category.silverMedal || "Not yet determined"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Medal className="w-5 h-5 text-amber-600" />
+                          <span className="text-sm">
+                            {category.bronzeMedal || "Not yet determined"}
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
                   </Card>
-                )
-              )}
-              {Object.keys(groupSportsByName(phase)).length === 0 && (
-                <Card className="col-span-full">
-                  <CardHeader>
-                    <CardTitle>No Sports Available</CardTitle>
-                    <CardDescription>
-                      There are currently no sports registered for Phase {phase}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              )}
-            </div>
-          </TabsContent>
-        ))}
-      </Tabs>
+                ))}
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
+      )}
+
+      {/* All modals */}
+      {showSportModal && (
+        <AddSportsModal
+          existingSports={sportsList}
+          onClose={() => setShowSportModal(false)}
+          onAddSport={handleAddSport}
+          onDeleteSport={handleDeleteSport}
+        />
+      )}
+      
+      {showCategoryModal && (
+        <AddSportCategoryModal
+          existingSports={sportsList}
+          existingCategories={sportCategories}
+          onClose={() => setShowCategoryModal(false)}
+          onAddCategory={handleAddSportCategory}
+        />
+      )}
+
+      {/* Delete confirmation modal */}
+      <DeleteConfirmPopup 
+        isOpen={deleteConfirm.show}
+        onClose={() => setDeleteConfirm({ show: false, id: null, type: 'sport', name: '' })}
+        onConfirm={handleDeleteConfirm}
+        itemType={deleteConfirm.type}
+        itemName={deleteConfirm.name}
+      />
     </div>
   );
-}
+};
+
+export default SportPage;

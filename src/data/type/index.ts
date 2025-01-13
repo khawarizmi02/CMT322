@@ -43,11 +43,21 @@ export const VOLLEYBALL_CATEGORIES = [
 ] as const;
 
 export type sports = {
-  sportID?: string;
-  sportName: string;
-  sportCategory: string;
-  phase: number;
-};
+    sportID?: string; //Used when fetching the data
+    sportName: string;
+}
+
+export type sportCategory = {
+    sportID: string;
+    sportCategoryID?: string; //Used when fetching the data
+    sportName?: string; //Used when fetching the data
+    sportCategoryName: string;
+    sportRef?: string; // refer to sports
+    imageUrl?: string;
+    goldMedal?: string; //Refer to overall winner
+    silverMedal?: string; //Refer to overall winner
+    bronzeMedal?: string; //Refer to overall winner
+}
 
 export type matches = {
   matchID?: string;
