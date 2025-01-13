@@ -75,3 +75,22 @@ export type matchesTeam = {
   desasiswa?: string; //A team can only represent one desasiswa
   participants?: matchesParticipant[]; // refer to participants
 };
+
+export type sessions = {
+  session_id?: string;
+  user_id: string;
+  client_id: string;
+  created_at: string;
+  expire_at: string;
+  last_active_at: string;
+  status: string;
+  updated_at: string;
+  abandon_at: string;
+};
+
+export type SessionEvent =
+  | 'session.created'
+  | 'session.ended'
+  | 'session.revoked'
+  | 'session.removed'
+  | 'session.pending';
