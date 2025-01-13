@@ -1,45 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import firestore from '@/lib/firebase/firestore';
 
-export async function POST(request: NextRequest) {
-    try {
-        const body = await request.json();
-        const { sportName, sportCategory, phase } = body;
-
-        console.log('Adding sport:', sportName, sportCategory, phase);
-
-        // Add the sport to Firestore
-        await firestore.addSportsData({ sportName, sportCategory, phase });
-
-        return NextResponse.json({ message: 'Sport added' });
-    } catch (error) {
-        console.error('Error adding sport:', error);
-        return new NextResponse('Error adding sport', { status: 500 });
-    }
-}
-
 export async function DELETE(request: NextRequest) {
     try {
         const body = await request.json();
-        const { sportID } = body;
+        const { sportCategoryID } = body;
 
-        console.log('Deleting sport:', sportID);
+        console.log('Deleting sport category:', sportCategoryID);
 
-        // Delete the sport from Firestore
-        await firestore.deleteSportsData(sportID);
+        // Delete the sport category from Firestore
+        await firestore.deleteSportCategory(sportCategoryID);
 
-        return NextResponse.json({ message: 'Sport deleted' });
+        return NextResponse.json({ message: 'Sport category deleted' });
     } catch (error) {
-        console.error('Error deleting sport:', error);
-        return new NextResponse('Error deleting sport', { status: 500 });
+        console.error('Error deleting sport category:', error);
+        return new NextResponse('Error deleting sport category', { status: 500 });
     }
 }
 
 export async function GET() {
     try {
-        const sports = await firestore.readSportsData();
+        const sportCategory = await firestore.readSportCategory();
 
-        return NextResponse.json({ sports });
+        return NextResponse.json({ sportCategory });
     } catch (error) {
         console.error('Error reading sports:', error);
         return new NextResponse('Error reading sports', { status: 500 });
