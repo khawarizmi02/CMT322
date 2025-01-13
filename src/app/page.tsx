@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React from 'react';
 import { Inter } from 'next/font/google';
 import {
@@ -10,8 +10,11 @@ import {
 } from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 import { SignInButton, useAuth } from '@clerk/nextjs';
+
+import { signIntoFirebaseWithClerk } from '@/lib/firebase/auth';
 import {
   Card,
   CardContent,
@@ -36,12 +39,23 @@ import LeaderboardDesasiswa from '@/components/LeaderboardDesasiswa';
 const inter = Inter({ subsets: ['latin'] });
 
 const Home: React.FC = () => {
+  const { isSignedIn, getToken } = useAuth();
 
-	const { isSignedIn } = useAuth();
+  useEffect(() => {
+    const signIn = async () => {
+      if (isSignedIn) {
+        const token = await getToken({ template: 'integration_firebase' });
+        await signIntoFirebaseWithClerk(token || '');
+      }
+    };
+    signIn();
+  }, [isSignedIn, getToken]);
 
   return (
-    <div className={`${inter.className} grid grid-cols-12 items-center gap-15 max-w-[90%]`}>
-			{!isSignedIn ? (
+    <div
+      className={`${inter.className} grid grid-cols-12 items-center gap-15 max-w-[90%]`}
+    >
+      {!isSignedIn ? (
         <div className="col-span-full flex justify-end p-4">
           <SignInButton>
             <button className="bg-[#654321] hover:bg-[#8B5E3C] text-white px-6 py-2 rounded-md transition-colors duration-200 flex items-center gap-2 font-medium">

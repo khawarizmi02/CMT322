@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@clerk/nextjs';
 import {
   Card,
   CardContent,
@@ -17,7 +16,6 @@ import { newsArticles } from '@/data/mock-news';
 
 const NewsPage = () => {
   const router = useRouter();
-	const { isSignedIn } = useAuth();
 
   const handleCreateNews = () => {
     router.push('/news/create');
@@ -27,15 +25,9 @@ const NewsPage = () => {
     <div className="container mx-auto px-6 py-12">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">SUKAD NEWS</h1>
-				{isSignedIn && (
-					<Button
-						className="flex items-center"
-						onClick={handleCreateNews}
-					>
-						<Plus className="w-6 h-6 mr-2" />
-						Create News
-					</Button>
-				)}
+        <Button variant="outline" onClick={handleCreateNews}>
+          <Plus className="mr-2 w-4 h-4" /> Create News
+        </Button>
       </div>
 
       <div className="grid md:grid-cols-3 gap-14">
