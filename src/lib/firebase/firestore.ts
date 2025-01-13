@@ -20,11 +20,6 @@ import {
   sessions,
   SessionEvent,
 } from '@/data/type/index';
-import { get } from 'http';
-import { read } from 'fs';
-import { get } from 'http';
-import { read } from 'fs';
-import { Session } from 'inspector/promises';
 
 export class Firestore{
     //add sports data

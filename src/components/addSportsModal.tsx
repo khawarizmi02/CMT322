@@ -1,22 +1,46 @@
 import React, { useState } from "react";
-import { sports } from "@/data/type/index";
+import {sports} from "@/data/type/index";
+import { Trash, Plus, X, AlertCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Alert,
+  AlertDescription,
+} from "@/components/ui/alert";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { 
+  Card,
+  CardContent
+} from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface AddSportModalProps {
-  existingSports: sports[]; // Pass the list of existing sports for validation
+  existingSports: sports[];
   onClose: () => void;
-  onAddSport: (newSport: sports) => void; // Callback to handle adding the new sport
+  onAddSport: (newSport: sports) => void;
+  onDeleteSport: (sportID: string) => void;
 }
 
 const AddSportModal: React.FC<AddSportModalProps> = ({
   existingSports,
   onClose,
   onAddSport,
+  onDeleteSport,
 }) => {
   const [sportName, setSportName] = useState<string>("");
   const [error, setError] = useState<string>("");
 
   const handleAddSport = () => {
-    // Validation: Ensure sport name is unique and not empty
     if (!sportName.trim()) {
       setError("Sport name cannot be empty.");
       return;
@@ -30,42 +54,87 @@ const AddSportModal: React.FC<AddSportModalProps> = ({
       return;
     }
 
-    // Pass the new sport to the parent component
     onAddSport({ sportName: sportName.trim() });
-    setError(""); // Clear error
-    onClose(); // Close the modal
+    setError("");
+    setSportName("");
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleAddSport();
+    }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-xl font-bold mb-4">Add New Sport</h2>
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Sport Name</label>
-          <input
-            type="text"
-            value={sportName}
-            onChange={(e) => setSportName(e.target.value)}
-            className="w-full px-3 py-2 border rounded"
-          />
+    <Dialog open onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold">Manage Sports</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-6">
+          {/* Add New Sport Section */}
+          <div className="space-y-4">
+            <div className="flex space-x-2">
+              <Input
+                value={sportName}
+                onChange={(e) => setSportName(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Enter sport name"
+                className="flex-1"
+              />
+              <Button onClick={handleAddSport} size="icon">
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {error && (
+              <Alert variant="destructive" className="py-2">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+          </div>
+
+          {/* Existing Sports List */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Existing Sports</h3>
+            <ScrollArea className="h-[200px] rounded-md border">
+              {existingSports.length === 0 ? (
+                <div className="p-4 text-center text-sm text-muted-foreground">
+                  No sports available.
+                </div>
+              ) : (
+                <div className="space-y-2 p-4">
+                  {existingSports.map((sport) => (
+                    <Card key={sport.sportID} className="group relative">
+                      <CardContent className="p-3 flex items-center justify-between">
+                        <span className="text-sm">{sport.sportName}</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => sport.sportID && onDeleteSport(sport.sportID)}
+                            >
+                              <Trash className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Delete sport</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </ScrollArea>
+          </div>
         </div>
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-        <div className="flex justify-end space-x-2">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleAddSport}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-          >
-            Add Sport
-          </button>
-        </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

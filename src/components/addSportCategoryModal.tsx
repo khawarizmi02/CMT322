@@ -1,11 +1,33 @@
 import React, { useState } from "react";
 import { sports, sportCategory } from "@/data/type/index";
+import { AlertCircle, Plus } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Alert,
+  AlertDescription,
+} from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
 
 interface SportCategoryModalProps {
-  existingSports: sports[]; // List of existing unique sports with their IDs
-  existingCategories: sportCategory[]; // List of existing categories for validation
-  onClose: () => void; // Close the modal
-  onAddCategory: (newCategory: sportCategory, sportID: string) => void; // Callback to add a new category
+  existingSports: sports[];
+  existingCategories: sportCategory[];
+  onClose: () => void;
+  onAddCategory: (newCategory: sportCategory, sportID: string) => void;
 }
 
 const AddSportCategoryModal: React.FC<SportCategoryModalProps> = ({
@@ -14,12 +36,11 @@ const AddSportCategoryModal: React.FC<SportCategoryModalProps> = ({
   onClose,
   onAddCategory,
 }) => {
-  const [selectedSportID, setSelectedSportID] = useState<string>(""); // Selected sport ID
-  const [categoryName, setCategoryName] = useState<string>(""); // New category name
-  const [error, setError] = useState<string>(""); // Validation error
+  const [selectedSportID, setSelectedSportID] = useState<string>("");
+  const [categoryName, setCategoryName] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   const handleAddCategory = () => {
-    // Validate input
     if (!selectedSportID) {
       setError("Please select a sport.");
       return;
@@ -41,7 +62,6 @@ const AddSportCategoryModal: React.FC<SportCategoryModalProps> = ({
       return;
     }
 
-    // Pass the new category to the parent component
     onAddCategory(
       {
         sportCategoryName: categoryName.trim(),
@@ -50,64 +70,84 @@ const AddSportCategoryModal: React.FC<SportCategoryModalProps> = ({
       selectedSportID
     );
 
-    setError(""); // Clear error
-    onClose(); // Close modal
+    setError("");
+    onClose();
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleAddCategory();
+    }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-xl font-bold mb-4">Add New Sport Category</h2>
+    <Dialog open onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold flex items-center gap-2">
+            <Plus className="h-5 w-5" />
+            Add New Sport Category
+          </DialogTitle>
+        </DialogHeader>
 
-        {/* Sport Dropdown */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Select Sport</label>
-          <select
-            value={selectedSportID}
-            onChange={(e) => setSelectedSportID(e.target.value)}
-            className="w-full px-3 py-2 border rounded"
-          >
-            <option value="" disabled>
-              -- Select a sport --
-            </option>
-            {existingSports.map((sport) => (
-              <option key={sport.sportID} value={sport.sportID}>
-                {sport.sportName}
-              </option>
-            ))}
-          </select>
+        <div className="space-y-6 py-4">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="sport">Select Sport</Label>
+              <Select
+                value={selectedSportID}
+                onValueChange={setSelectedSportID}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a sport" />
+                </SelectTrigger>
+                <SelectContent>
+                  {existingSports.map((sport) => (
+                    <SelectItem key={sport.sportID} value={sport.sportID || ""}>
+                      {sport.sportName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="category">Category Name</Label>
+              <Input
+                id="category"
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Enter category name"
+              />
+            </div>
+
+            {error && (
+              <Alert variant="destructive" className="py-2">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+          </div>
         </div>
 
-        {/* Category Name Input */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">Category Name</label>
-          <input
-            type="text"
-            value={categoryName}
-            onChange={(e) => setCategoryName(e.target.value)}
-            className="w-full px-3 py-2 border rounded"
-          />
-        </div>
-
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-
-        {/* Action Buttons */}
-        <div className="flex justify-end space-x-2">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleAddCategory}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-          >
-            Add Category
-          </button>
-        </div>
-      </div>
-    </div>
+        <DialogFooter>
+          <div className="flex gap-2 justify-end">
+            <Button
+              variant="outline"
+              onClick={onClose}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAddCategory}
+            >
+              Add Category
+            </Button>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

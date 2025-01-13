@@ -33,3 +33,20 @@ export async function GET() {
         return new NextResponse('Error reading sports', { status: 500 });
     }
 }
+
+export async function DELETE(request: NextRequest) {
+    try {
+        const body = await request.json();
+        const { sportID } = body;
+
+        console.log('Deleting sport:', sportID);
+
+        // Delete the sport from Firestore
+        await firestore.deleteSportsData(sportID);
+
+        return NextResponse.json({ message: 'Sport deleted' });
+    } catch (error) {
+        console.error('Error deleting sport:', error);
+        return new NextResponse('Error deleting sport', { status: 500 });
+    }
+}
