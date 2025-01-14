@@ -4,6 +4,7 @@
 //User just need to register the sport for what phase only.
 //User can't add new sport to the list without admin help etc.
 
+/* SPORTS AND MATCHES MODULE */
 export const DESASISWA_LIST = [
   'Aman Damai',
   'Bakti Permai',
@@ -43,21 +44,21 @@ export const VOLLEYBALL_CATEGORIES = [
 ] as const;
 
 export type sports = {
-    sportID?: string; //Used when fetching the data
-    sportName: string;
-}
+  sportID?: string; //Used when fetching the data
+  sportName: string;
+};
 
 export type sportCategory = {
-    sportID: string;
-    sportCategoryID?: string; //Used when fetching the data
-    sportName?: string; //Used when fetching the data
-    sportCategoryName: string;
-    sportRef?: string; // refer to sports
-    imageUrl?: string;
-    goldMedal?: string; //Refer to overall winner
-    silverMedal?: string; //Refer to overall winner
-    bronzeMedal?: string; //Refer to overall winner
-}
+  sportID: string;
+  sportCategoryID?: string; //Used when fetching the data
+  sportName?: string; //Used when fetching the data
+  sportCategoryName: string;
+  sportRef?: string; // refer to sports
+  imageUrl?: string;
+  goldMedal?: string; //Refer to overall winner
+  silverMedal?: string; //Refer to overall winner
+  bronzeMedal?: string; //Refer to overall winner
+};
 
 export type matches = {
   matchID?: string;
@@ -86,6 +87,18 @@ export type matchesTeam = {
   participants?: matchesParticipant[]; // refer to participants
 };
 
+/* NEWS MODULE */
+export type news = {
+  newsID?: string;
+  title: string;
+  content: string;
+  date: string;
+  imageUrl?: string;
+  type: 'news' | 'announcement';
+  tags?: string[];
+};
+
+/* SESSION MODULE */
 export type sessions = {
   session_id?: string;
   user_id: string;

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Card,
@@ -13,66 +13,41 @@ import { ChevronRight, Calendar, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { newsArticles } from '@/data/mock-news';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import CreateNewsForm from './CreateNewsForm';
+import NewsList from './NewsList';
 
 const NewsPage = () => {
   const router = useRouter();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleCreateNews = () => {
-    router.push('/news/create');
+    setIsDialogOpen(true);
   };
 
   return (
     <div className="container mx-auto px-6 py-12">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">SUKAD NEWS</h1>
-        <Button variant="outline" onClick={handleCreateNews}>
-          <Plus className="mr-2 w-4 h-4" /> Create News
-        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" onClick={handleCreateNews}>
+              <Plus className="mr-2 w-4 h-4" /> Create News
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
+            <DialogTitle>Create News</DialogTitle>
+            <CreateNewsForm onClose={() => setIsDialogOpen(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-14">
-        {newsArticles.map((article) => (
-          <Card
-            key={article.id}
-            className="rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 bg-white"
-          >
-            <CardHeader className="p-0 relative">
-              <img
-                src={article.imageUrl}
-                alt={article.title}
-                className="w-full h-48 object-cover"
-              />
-            </CardHeader>
-            <CardContent className="p-2">
-              <div className="flex items-center text-sm text-muted-foreground mb-2">
-                <Calendar className="w-4 h-4 mr-2" />
-                {article.date}
-              </div>
-
-              <CardTitle className="mb-3">{article.title}</CardTitle>
-
-              <p className="text-muted-foreground mb-4 truncate">
-                {article.description}
-              </p>
-
-              <div className="flex space-x-2 mb-4">
-                {article.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" className="w-full" asChild>
-                <a href={`/news/${article.id}`}>
-                  Read More <ChevronRight className="ml-2 w-4 h-4" />
-                </a>
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+      <NewsList />
     </div>
   );
 };
