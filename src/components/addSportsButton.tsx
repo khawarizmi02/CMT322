@@ -24,7 +24,7 @@ import {
   BADMINTON_CATEGORIES,
   TRACKS_CATEGORIES,
   VOLLEYBALL_CATEGORIES,
-  sports
+  sports,
 } from '@/data/type';
 
 const getSportCategories = (sportName: string) => {
@@ -45,7 +45,10 @@ interface AddSportsButtonProps {
   onAddSport: (sport: Omit<sports, 'sportID'>) => void;
 }
 
-const AddSportsButton = ({ currentPhase, onAddSport }: AddSportsButtonProps) => {
+const AddSportsButton = ({
+  currentPhase,
+  onAddSport,
+}: AddSportsButtonProps) => {
   const [selectedSport, setSelectedSport] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [open, setOpen] = useState(false);
@@ -54,8 +57,6 @@ const AddSportsButton = ({ currentPhase, onAddSport }: AddSportsButtonProps) => 
     if (selectedSport && selectedCategory) {
       onAddSport({
         sportName: selectedSport,
-        sportCategory: selectedCategory,
-        phase: currentPhase
       });
       setOpen(false);
       setSelectedSport('');
@@ -63,14 +64,14 @@ const AddSportsButton = ({ currentPhase, onAddSport }: AddSportsButtonProps) => 
     }
   };
 
-  const currentCategories = selectedSport ? getSportCategories(selectedSport) : [];
+  const currentCategories = selectedSport
+    ? getSportCategories(selectedSport)
+    : [];
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button 
-          className="mb-6 bg-[#654321] hover:bg-[#654321]/90"
-        >
+        <Button className="mb-6 bg-[#654321] hover:bg-[#654321]/90">
           <Plus className="w-4 h-4 mr-2" />
           Add Sports
         </Button>
@@ -85,10 +86,7 @@ const AddSportsButton = ({ currentPhase, onAddSport }: AddSportsButtonProps) => 
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="sport">Sport</Label>
-            <Select
-              value={selectedSport}
-              onValueChange={setSelectedSport}
-            >
+            <Select value={selectedSport} onValueChange={setSelectedSport}>
               <SelectTrigger id="sport">
                 <SelectValue placeholder="Select a sport" />
               </SelectTrigger>
@@ -101,7 +99,7 @@ const AddSportsButton = ({ currentPhase, onAddSport }: AddSportsButtonProps) => 
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="grid gap-2">
             <Label htmlFor="category">Category</Label>
             <Select
@@ -123,10 +121,7 @@ const AddSportsButton = ({ currentPhase, onAddSport }: AddSportsButtonProps) => 
           </div>
         </div>
         <div className="flex justify-end gap-3">
-          <Button
-            variant="outline"
-            onClick={() => setOpen(false)}
-          >
+          <Button variant="outline" onClick={() => setOpen(false)}>
             Cancel
           </Button>
           <Button
