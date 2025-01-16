@@ -293,7 +293,7 @@ const SportPage = () => {
                 {categories.map((category) => (
                   <Card 
                     key={category.sportCategoryID} 
-                    className="overflow-hidden hover:shadow-lg transition-shadow" 
+                    className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" 
                     onClick={() => category.sportCategoryID && handleViewMatch(category.sportCategoryID)}
                   >
                     {category.imageUrl && (
