@@ -5,6 +5,8 @@ import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase/firebase';
 
 import firestore from '@/lib/firebase/firestore';
+import { storage } from '@/firebase/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export async function POST(req: NextRequest) {
   // Check if the user is signed in
@@ -13,19 +15,27 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const data = await req.json(); // Parse the request body
+    const formData = await req.formData(); // Parse the request body as FormData
+    const data = JSON.parse(formData.get('data') as string); // Extract the JSON data
+    const imageFile = formData.get('image') as File; // Extract the image file
 
     console.log('Data received:', data);
 
-    // Add a new document with a generated ID
+    let imageUrl = '';
+    if (imageFile) {
+      const storageRef = ref(storage, `news_images/${imageFile.name}`);
+      await uploadBytes(storageRef, imageFile);
+      imageUrl = await getDownloadURL(storageRef);
+    }
 
-    const news = firestore.createNews(data);
+    // Add a new document with a generated ID
+    const news = await firestore.createNews({ ...data, imageUrl });
 
     if (!news) {
       return new NextResponse('Error creating news', { status: 500 });
     }
 
-    return NextResponse.json({ infoId: news });
+    return NextResponse.json({ infoId: news.id });
   } catch (error) {
     console.error('Error writing info:', error);
     return new NextResponse('Error writing info', { status: 500 });

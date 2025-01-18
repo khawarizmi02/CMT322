@@ -16,6 +16,7 @@ import {
   DialogTrigger,
   DialogTitle,
 } from '@/components/ui/dialog';
+import PreRenderContent from '@/components/PreRenderContent';
 import { Loader } from 'lucide-react';
 
 import { news } from '@/data/type';
@@ -45,6 +46,16 @@ const NewsList = () => {
     };
     fetchNews();
   }, []);
+
+  const handleDate = (date: string) => {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = d.getFullYear();
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${day}-${month}-${year} ${hours}:${minutes}`;
+  };
 
   if (loading) {
     return (
@@ -78,14 +89,12 @@ const NewsList = () => {
             <CardContent className="p-2">
               <div className="flex items-center text-sm text-muted-foreground mb-2">
                 <Calendar className="w-4 h-4 mr-2" />
-                {article.date}
+                {handleDate(article.date)}
               </div>
 
               <CardTitle className="mb-3">{article.title}</CardTitle>
 
-              <p className="text-muted-foreground mb-4 truncate">
-                {article.content}
-              </p>
+              <PreRenderContent content={article.content} />
 
               <div className="flex space-x-2 mb-4">
                 {article.tags?.map((tag) => (
