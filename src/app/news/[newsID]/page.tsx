@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import LoadinComponent from '@/components/LoadingComponent';
 import { useToast } from '@/hooks/use-toast';
 import { news } from '@/data/type';
 import Tiptap from '@/components/Tiptap';
@@ -129,12 +130,7 @@ const Page = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-        <Loader className="w-12 h-12 animate-spin text-primary" />
-        <p className="text-muted-foreground">Loading news details...</p>
-      </div>
-    );
+    return <LoadinComponent dataName="news" />;
   }
 
   if (!newsArticle) {

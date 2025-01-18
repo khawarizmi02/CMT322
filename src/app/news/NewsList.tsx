@@ -17,6 +17,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import PreRenderContent from '@/components/PreRenderContent';
+import LoadingComponent from '@/components/LoadingComponent';
 import { Loader } from 'lucide-react';
 
 import { news } from '@/data/type';
@@ -58,12 +59,7 @@ const NewsList = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-        <Loader className="w-12 h-12 animate-spin text-primary" />
-        <p className="text-muted-foreground">Loading sports data...</p>
-      </div>
-    );
+    return <LoadingComponent dataName="news" />;
   }
 
   return (

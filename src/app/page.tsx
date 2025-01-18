@@ -35,6 +35,9 @@ import { NewsDetails } from '@/data/mock-news';
 import { SportsListDetails } from '@/data/mock-sportslist';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import LeaderboardDesasiswa from '@/components/LeaderboardDesasiswa';
+import AnnouncementList from '@/app/AnnouncementList';
+import SportList from './SportList';
+import NewsList from './NewsList';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -52,9 +55,7 @@ const Home: React.FC = () => {
   }, [isSignedIn, getToken]);
 
   return (
-    <div
-      className={`${inter.className} grid grid-cols-12 items-center gap-15 max-w-[90%]`}
-    >
+    <div className={`${inter.className} max-w-[90%]`}>
       {!isSignedIn ? (
         <div className="col-span-full flex justify-end p-4">
           <SignInButton>
@@ -65,107 +66,24 @@ const Home: React.FC = () => {
         </div>
       ) : null}
       {/* Announcement */}
-      <div className="col-span-full bg-white p-4 w-full h-fill flex">
-        <div className="w-1/2 p-4">
-          <h1 className="text-3xl font-bold">Announcement Topic</h1>
-          <h2 className="text-lg font-bold">Announcement Sub Topic</h2>
-          <p className="justify-text">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam
-            suscipit tempor nisi, eget tempor ante. Aliquam erat volutpat.
-            Aliquam tristique, purus eu sodales volutpat, purus odio ullamcorper
-            nisl, vel pulvinar diam erat vel purus. Nunc vel aliquam lectus.
-            Cras commodo dolor ac nibh scelerisque porta. Phasellus vitae velit
-            non nibh aliquam mollis in non massa. Nunc id suscipit mauris. Nulla
-            facilisi. Donec ornare, nulla in gravida molestie, ligula massa
-            posuere mi, nec tempor sapien erat in elit. Cras molestie a ligula
-            aliquet tempor. Vestibulum ante ipsum primis in faucibus orci luctus
-            et ultrices posuere cubilia curae; Morbi vel nisi id sem condimentum
-            sollicitudin et eget mi. Integer ac sollicitudin turpis. Ut
-            condimentum neque vitae tellus pretium consectetur. Curabitur tempus
-            tellus quis luctus consectetur.
-          </p>
+      <AnnouncementList />
+
+      <Link
+        title="News"
+        className="text-[#654321] flex flex-row gap-2 w-[160px]"
+        href="/news"
+      >
+        <h1 className="text-xl font-medium">News!</h1>
+        <div className="pt-1.5">
+          <FaArrowRight />
         </div>
-        <div className="w-1/3 flex justify-center items-center">
-          <Image
-            src="/images/football.jpg"
-            alt="Football"
-            layout="intrinsic"
-            width={300}
-            height={200}
-          />
-        </div>
-      </div>
-
-      {/* Buttons */}
-      <div className="col-span-full flex justify-around py-2.5">
-        <button className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2">
-          <FaMapMarkerAlt />
-          Register Now!
-        </button>
-        <button className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2">
-          <FaBookmark />
-          Upcoming Event!
-        </button>
-        <button className="bg-transparent text-[#654321] px-6 py-3 rounded-md flex items-center gap-2">
-          <FaBell />
-          Event List!
-        </button>
-      </div>
-
-      {/* News */}
-
-      <div className="bg-gray-100 px-4 pt-4 col-span-full">
-        <button
-          title="News"
-          className="text-[#654321] flex flex-row gap-2 w-[160px]"
-        >
-          <h1 className="text-xl font-medium">News!</h1>
-          <div className="pt-1.5">
-            <FaArrowRight />
-          </div>
-        </button>
-      </div>
-      <div className="flex bg-gray-100 p-4 col-span-full">
-        <ScrollArea className="w-full whitespace-nowrap rounded-md">
-          <div className="flex gap-4">
-            {NewsDetails.map((news, index) => (
-              <div key={news.id} className="w-[400px] h-[400px]">
-                <Card className="w-full h-full flex flex-col">
-                  <CardHeader className="p-4 space-y-2 flex-shrink-0">
-                    <CardTitle className="text-lg">{news.title}</CardTitle>
-                    <CardDescription className="text-sm line-clamp-2">
-                      {' '}
-                      {/* Added line-clamp-2 */}
-                      {news.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-4 flex-grow flex items-center justify-center">
-                    <div className="relative w-full h-[200px]">
-                      <Image
-                        src={`${news.image}`}
-                        alt="Football"
-                        layout="fill"
-                        objectFit="contain"
-                        className="rounded-md"
-                      />
-                    </div>
-                  </CardContent>
-                  <CardFooter className="p-4 flex-shrink-0">
-                    <button className="bg-transparent text-[#654321] px-6 py-2 rounded-md flex items-center gap-2 text-sm">
-                      <FaPlay />
-                      Watch Now!
-                    </button>
-                  </CardFooter>
-                </Card>
-              </div>
-            ))}
-          </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+      </Link>
+      <div className="bg-gray-100 px-4 py-4 my-3">
+        <NewsList />
       </div>
 
       {/* Leaderboard */}
-      <div className="bg-gray-100 px-4 pt-4 col-span-full">
+      <div className="bg-gray-100 px-4 pt-4">
         <button
           title="Leaderboard"
           className="text-[#654321] flex flex-row gap-2 w-[160px]"
@@ -176,12 +94,12 @@ const Home: React.FC = () => {
           </div>
         </button>
       </div>
-      <div className="flex bg-gray-100 p-4 col-span-full">
+      <div className="flex bg-gray-100 p-4">
         <LeaderboardDesasiswa />
       </div>
 
       {/* Sports List */}
-      <div className="bg-gray-100 px-4 pt-4 col-span-full">
+      <div className="bg-gray-100 px-4 pt-4">
         <button
           title="SportsList"
           className="text-[#654321] flex flex-row gap-2 w-[160px]"
@@ -192,7 +110,7 @@ const Home: React.FC = () => {
           </div>
         </button>
       </div>
-      <div className="flex bg-gray-100 p-4 pb-10 col-span-full">
+      <div className="flex bg-gray-100 p-4 pb-10">
         <ScrollArea className="w-full whitespace-nowrap rounded-md">
           <div className="flex gap-4">
             {SportsListDetails.map((sports, index) => (
