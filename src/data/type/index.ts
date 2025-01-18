@@ -69,7 +69,7 @@ export type matches = {
   matchVenue?: string;
   matchWinner?: string;
   matchScore?: string;
-  teams?: matchesTeam[]; // refer to participants
+  teams?: matchesTeam[];
   participants?: matchesParticipant[]; // refer to participants
   sportName: string; //Duplicate data to make it easier to query and filter
   sportCategory: string; //Duplicate data to make it easier to query and filter

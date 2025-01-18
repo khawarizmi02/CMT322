@@ -130,10 +130,10 @@ export class Firestore {
   async createMatches(data: matches) {
     try {
       const docRef = await addDoc(collection(db, 'matches'), data);
-      console.log('Document written with ID: ', docRef.id);
+      console.log('Matches created with ID: ', docRef.id);
       return docRef.id;
     } catch (e) {
-      console.error('Error adding document: ', e);
+      console.error('Error creating matches: ', e);
     }
   }
 
