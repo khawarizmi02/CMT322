@@ -316,13 +316,10 @@ const SportPage = () => {
             <TabsContent key={sportName} value={sportName}>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {categories.map((category) => (
-                  <Card
-                    key={category.sportCategoryID}
-                    className="overflow-hidden hover:shadow-lg transition-shadow"
-                    // onClick={() =>
-                    //   category.sportCategoryID &&
-                    //   handleViewMatch(category.sportCategoryID)
-                    // }
+                  <Card 
+                    key={category.sportCategoryID} 
+                    className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" 
+                    onClick={() => category.sportCategoryID && handleViewMatch(category.sportCategoryID)}
                   >
                     {category.imageUrl && (
                       <div className="relative h-48 overflow-hidden">
@@ -342,14 +339,14 @@ const SportPage = () => {
                           <Button
                             variant="destructive"
                             size="icon"
-                            onClick={() =>
-                              category.sportCategoryID &&
-                              confirmDelete(
-                                category.sportCategoryID,
-                                'category',
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              category.sportCategoryID && confirmDelete(
+                                category.sportCategoryID, 
+                                'category', 
                                 category.sportCategoryName
-                              )
-                            }
+                              );
+                            }}
                             className="text-destructive hover:text-destructive/90"
                           >
                             <Trash className="w-4 h-4" color="white" />
