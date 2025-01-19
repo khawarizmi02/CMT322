@@ -34,7 +34,9 @@ export default function RootLayout({
         </head>
         <body className="antialiased">
           <AuthContent>
-            <main className="flex flex-col items-center">{children}</main>
+            <main className="flex flex-col items-center w-full">
+              {children}
+            </main>
           </AuthContent>
           <Toaster />
         </body>
