@@ -1,4 +1,4 @@
-import { db } from '@/firebase/firebase';
+import { db, storage } from '@/firebase/firebase';
 import {
   collection,
   setDoc,
@@ -12,6 +12,12 @@ import {
   arrayUnion,
   deleteDoc,
 } from 'firebase/firestore';
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from 'firebase/storage';
 import {
   sports,
   sportCategory,
@@ -109,6 +115,7 @@ export class Firestore {
     }
   }
 
+  /* MATCHES MODULE */
   //Run once to import the matcehs data
   async importMatchesData() {
     const matches = require('@/data/matches.json');
@@ -123,10 +130,10 @@ export class Firestore {
   async createMatches(data: matches) {
     try {
       const docRef = await addDoc(collection(db, 'matches'), data);
-      console.log('Document written with ID: ', docRef.id);
+      console.log('Matches created with ID: ', docRef.id);
       return docRef.id;
     } catch (e) {
-      console.error('Error adding document: ', e);
+      console.error('Error creating matches: ', e);
     }
   }
 
@@ -147,6 +154,35 @@ export class Firestore {
         participants: doc.data().participants,
         sportName: doc.data().sportName,
         sportCategory: doc.data().sportCategory,
+        sportCategoryID: doc.data().sportCategoryID,
+      });
+    });
+    console.log(matches);
+    return matches;
+  }
+
+  async readMatchesBySportCategory(sportCategoryID: string) {
+    const matches: matches[] = [];
+    const q = query(
+      collection(db, 'matches'),
+      where('sportCategoryID', '==', sportCategoryID)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      matches.push({
+        matchID: doc.id,
+        sportID: doc.data().sportID,
+        matchDate: doc.data().matchDate,
+        matchTime: doc.data().matchTime,
+        matchStatus: doc.data().matchStatus,
+        matchVenue: doc.data().matchVenue,
+        matchWinner: doc.data().matchWinner,
+        matchScore: doc.data().matchScore,
+        teams: doc.data().teams,
+        participants: doc.data().participants,
+        sportName: doc.data().sportName,
+        sportCategory: doc.data().sportCategory,
+        sportCategoryID: doc.data().sportCategoryID,
       });
     });
     console.log(matches);
@@ -154,11 +190,25 @@ export class Firestore {
   }
 
   /* NEWS MODULE */
-  async createNews(data: news) {
+  async uploadImage(file: File, path: string): Promise<string> {
+    const storageRef = ref(storage, path);
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+  }
+
+  async createNews(data: news, imageFile?: File) {
+    if (imageFile) {
+      const imageUrl = await this.uploadImage(
+        imageFile,
+        `news/${imageFile.name}`
+      );
+      data.imageUrl = imageUrl;
+    }
     data['date'] = new Date().toISOString();
     try {
       const docRef = await addDoc(collection(db, 'News'), data);
-      // console.log('Document written with ID: ', docRef.id);
+      console.log('Document written with ID: ', docRef.id);
       return docRef;
     } catch (e) {
       console.error('Error adding document: ', e);
@@ -190,12 +240,44 @@ export class Firestore {
 
   async deleteNews(news_id: string) {
     try {
+      const news = await this.readNews(news_id);
+      if (news && news.imageUrl) {
+        const storageRef = ref(storage, news.imageUrl);
+        await deleteObject(storageRef);
+      }
       await deleteDoc(doc(db, 'News', news_id));
       console.log('Document with ID: ', news_id, ' deleted');
       return true;
     } catch (e) {
       console.error('Error deleting document: ', e);
       return false;
+    }
+  }
+
+  async readAnnouncements() {
+    const announcements: news[] = [];
+    try {
+      const q = query(
+        collection(db, 'News'),
+        where('type', '==', 'announcement')
+      );
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        announcements.push({
+          newsID: doc.id,
+          title: doc.data().title,
+          content: doc.data().content,
+          date: doc.data().date,
+          imageUrl: doc.data().imageUrl,
+          type: doc.data().type,
+          tags: doc.data().tags,
+        });
+      });
+      console.log(announcements);
+      return announcements;
+    } catch (error) {
+      console.error('Error fetching announcements: ', error);
+      return [];
     }
   }
 

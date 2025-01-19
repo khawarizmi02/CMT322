@@ -25,6 +25,7 @@ import { useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -33,31 +34,28 @@ import {
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { storage } from '@/firebase/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import Tiptap from '@/components/Tiptap';
 
 // Zod validation schema
 const infoSchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters' }),
   content: z
     .string()
-    .min(20, { message: 'Content must be at least 20 characters' }),
+    .min(1, { message: 'Hey the title is not long Enough' })
+    .max(99999, { message: 'Hey the title is too long' })
+    .trim(),
   type: z.string(),
   imageUrl: z
-    .string()
+    .any()
     .optional()
     .superRefine((value, context) => {
-      const type = context.path.includes('type')
-        ? context.path[context.path.indexOf('type') + 1]
-        : undefined;
-      if (type === 'news' && !value) {
+      const type = value.type;
+      if (type === 'news' && (!value || value.length === 0)) {
         context.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Image URL is required for news type',
-        });
-      }
-      if (value && !/^https?:\/\/[^\s$.?#].[^\s]*$/.test(value)) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Please enter a valid URL',
+          message: 'Image is required for news type',
         });
       }
     }),
@@ -72,6 +70,7 @@ const CreateNewsForm = ({ onClose }: { onClose: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   // Initialize form with zod resolver
   const form = useForm<FormData>({
@@ -103,21 +102,24 @@ const CreateNewsForm = ({ onClose }: { onClose: () => void }) => {
   async function onSubmit(data: FormData) {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/create-info', {
+      const formData = new FormData();
+      formData.append('data', JSON.stringify({ ...data, tags }));
+      if (data.imageUrl) {
+        formData.append('image', data.imageUrl);
+      }
+
+      const response = await fetch('/api/news', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...data, tags }), // Include tags in the form data
+        body: formData,
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create info');
+        throw new Error('Failed to create news');
       }
 
       toast({
         title: 'Success',
-        description: 'Info has been created successfully',
+        description: 'News has been created successfully',
       });
 
       router.refresh();
@@ -126,7 +128,7 @@ const CreateNewsForm = ({ onClose }: { onClose: () => void }) => {
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to create info. Please try again.',
+        description: 'Failed to create news. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -134,17 +136,49 @@ const CreateNewsForm = ({ onClose }: { onClose: () => void }) => {
     }
   }
 
+  function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      form.setValue('imageUrl', file);
+    }
+  }
+
   return (
-    <Card className="w-full max-w-xl mx-auto space-y-6">
-      <CardHeader>
-        <CardTitle>Create Info</CardTitle>
-        <CardDescription>
-          Create a new info article with specified type and content.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <Card className="w-full mx-auto space-y-6">
+      <CardContent className="mt-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Type Dropdown */}
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }: { field: any }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="news">News</SelectItem>
+                      <SelectItem value="announcement">Announcement</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             {/* Title Field */}
             <FormField
               control={form.control}
@@ -168,87 +202,72 @@ const CreateNewsForm = ({ onClose }: { onClose: () => void }) => {
                 <FormItem>
                   <FormLabel>Content</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Enter content"
-                      className="min-h-32"
-                      {...field}
-                    />
+                    <Tiptap onChange={field.onChange} description={''} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Type Dropdown */}
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Type</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="news">News</SelectItem>
-                      <SelectItem value="announcement">Announcement</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             {form.watch('type') === 'news' && (
-              <FormField
-                control={form.control}
-                name="imageUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>News Image URL (Optional)</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter image URL (optional)"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            {/* Tags Field */}
-            <div>
-              <Label>Tags</Label>
-              <div className="flex space-x-2">
-                <Input
-                  placeholder="Enter tag"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
+              <>
+                <FormField
+                  control={form.control}
+                  name="imageUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>News Image (Optional)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                        />
+                      </FormControl>
+                      {imagePreview && (
+                        <img
+                          src={imagePreview}
+                          alt="Image Preview"
+                          className="mt-2 max-h-64"
+                        />
+                      )}
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <Button type="button" onClick={handleAddTag}>
-                  Add Tag
-                </Button>
-              </div>
-              <div className="mt-2 space-x-2">
-                {tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="inline-block bg-gray-200 px-2 py-1 rounded cursor-pointer"
-                    onClick={() => removeTag(tag)}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
+
+                {/* Tags Field */}
+                <div>
+                  <Label>Tags</Label>
+                  <div className="flex space-x-2">
+                    <Input
+                      placeholder="Enter tag"
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                    />
+                    <Button
+                      type="button"
+                      variant="default"
+                      onClick={handleAddTag}
+                    >
+                      Add Tag
+                    </Button>
+                  </div>
+                  <FormDescription>Click the tag to remove</FormDescription>
+                  <div className="mt-2 space-x-2">
+                    {tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="inline-block bg-gray-200 px-2 py-1 rounded cursor-pointer"
+                        onClick={() => removeTag(tag)}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Submit Button */}
             <Button type="submit" className="w-full" disabled={isLoading}>

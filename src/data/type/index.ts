@@ -69,10 +69,11 @@ export type matches = {
   matchVenue?: string;
   matchWinner?: string;
   matchScore?: string;
-  teams?: matchesTeam[]; // refer to participants
+  teams?: matchesTeam[];
   participants?: matchesParticipant[]; // refer to participants
   sportName: string; //Duplicate data to make it easier to query and filter
   sportCategory: string; //Duplicate data to make it easier to query and filter
+  sportCategoryID: string; // refer to sportCategory
 };
 
 export type matchesParticipant = {
@@ -93,6 +94,7 @@ export type news = {
   title: string;
   content: string;
   date: string;
+  lastUpdated?: string;
   imageUrl?: string;
   type: 'news' | 'announcement';
   tags?: string[];
