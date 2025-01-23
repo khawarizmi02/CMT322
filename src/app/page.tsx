@@ -100,47 +100,19 @@ const Home: React.FC = () => {
 
       {/* Sports List */}
       <div className="bg-gray-100 px-4 pt-4">
-        <button
+        <Link
           title="SportsList"
           className="text-[#654321] flex flex-row gap-2 w-[160px]"
+          href="/sports"
         >
           <h1 className="text-xl font-medium">Sports List!</h1>
           <div className="pt-1.5">
             <FaArrowRight />
           </div>
-        </button>
+        </Link>
       </div>
       <div className="flex bg-gray-100 p-4 pb-10">
-        <ScrollArea className="w-full whitespace-nowrap rounded-md">
-          <div className="flex gap-4">
-            {SportsListDetails.map((sports, index) => (
-              <div key={sports.id} className="w-[200px] h-[250px]">
-                <Card className="w-full h-full flex flex-col">
-                  <CardHeader className="p-2 space-y-2 flex-shrink-0">
-                    <CardTitle className="text-lg">{sports.title}</CardTitle>
-                    <CardDescription className="text-sm line-clamp-2">
-                      {' '}
-                      {/* Added line-clamp-2 */}
-                      {sports.category}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-2 flex-grow flex items-center justify-center">
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={`${sports.image}`}
-                        alt="Football"
-                        layout="fill"
-                        objectFit="contain"
-                        className="rounded-md"
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            ))}
-          </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        <SportList />
       </div>
 
       {/* Footer */}
