@@ -70,7 +70,7 @@ export type matches = {
   matchWinner?: string;
   matchScore?: string;
   teams?: matchesTeam[];
-  participants?: matchesParticipant[]; // refer to participants
+  // participants?: matchesParticipant[]; // refer to participants
   sportName: string; //Duplicate data to make it easier to query and filter
   sportCategory: string; //Duplicate data to make it easier to query and filter
   sportCategoryID: string; // refer to sportCategory
@@ -79,7 +79,6 @@ export type matches = {
 export type matchesParticipant = {
   name: string;
   matricNo: string;
-  desasiswa?: string; //only filled if the participated in non team sport
 };
 
 export type matchesTeam = {
