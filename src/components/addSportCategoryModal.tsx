@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { sports, sportCategory } from "@/data/type/index";
-import { AlertCircle, Plus } from "lucide-react";
+import { AlertCircle, Plus, ImagePlus, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -27,7 +27,7 @@ interface SportCategoryModalProps {
   existingSports: sports[];
   existingCategories: sportCategory[];
   onClose: () => void;
-  onAddCategory: (newCategory: sportCategory, sportID: string) => void;
+  onAddCategory: (newCategory: sportCategory, sportID: string, imageFile?: File) => void;
 }
 
 const AddSportCategoryModal: React.FC<SportCategoryModalProps> = ({
@@ -38,7 +38,39 @@ const AddSportCategoryModal: React.FC<SportCategoryModalProps> = ({
 }) => {
   const [selectedSportID, setSelectedSportID] = useState<string>("");
   const [categoryName, setCategoryName] = useState<string>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [error, setError] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      setError("Invalid file type. Please upload JPEG, PNG, GIF, or WebP images.");
+      return;
+    }
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      setError("File size exceeds 5MB. Please choose a smaller image.");
+      return;
+    }
+
+    setImageFile(file);
+    setError("");
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const handleAddCategory = () => {
     if (!selectedSportID) {
@@ -67,7 +99,8 @@ const AddSportCategoryModal: React.FC<SportCategoryModalProps> = ({
         sportCategoryName: categoryName.trim(),
         sportID: selectedSportID,
       } as sportCategory,
-      selectedSportID
+      selectedSportID,
+      imageFile || undefined
     );
 
     setError("");
@@ -120,6 +153,39 @@ const AddSportCategoryModal: React.FC<SportCategoryModalProps> = ({
                 onKeyPress={handleKeyPress}
                 placeholder="Enter category name"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Category Image (Optional)</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  id="imageUpload"
+                />
+                <Label 
+                  htmlFor="imageUpload" 
+                  className="flex items-center gap-2 cursor-pointer border p-2 rounded hover:bg-gray-100"
+                >
+                  <ImagePlus className="h-5 w-5" />
+                  Upload Image
+                </Label>
+                {imageFile && (
+                  <div className="flex items-center gap-2">
+                    <span>{imageFile.name}</span>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={removeImage}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {error && (

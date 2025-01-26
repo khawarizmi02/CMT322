@@ -1,19 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { storage } from '@/firebase/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import firestore from '@/lib/firebase/firestore';
 
 export async function POST(request: NextRequest) {
     try {
-        const body = await request.json();
-        const { newSportCategory, sportID } = body;
+        const formData = await request.formData();
+        const sportCategoryName = formData.get('sportCategoryName') as string;
+        const sportID = formData.get('sportID') as string;
+        const imageFile = formData.get('image') as File | null;
 
-        console.log('Adding sport category:', newSportCategory, sportID);
+        let imageUrl = '';
+        if (imageFile) {
+            const storageRef = ref(storage, `sport_category/${imageFile.name}`);
+            await uploadBytes(storageRef, imageFile);
+            imageUrl = await getDownloadURL(storageRef);
+        }
+
+        const newSportCategory = {
+            sportCategoryName,
+            imageUrl,
+            sportID
+        };
 
         // Add the sport category to Firestore
-        const docRef = await firestore.addSportCategory( newSportCategory, sportID);
+        const docRef = await firestore.addSportCategory(newSportCategory, sportID);
 
         if(docRef){
-            return NextResponse.json({ message: 'Sport category added' });
-        }else{
+            return NextResponse.json({ 
+                message: 'Sport category added',
+                imageUrl 
+            });
+        } else {
             return new NextResponse('Error adding sport category', { status: 500 });
         }
 
