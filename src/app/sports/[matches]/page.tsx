@@ -186,7 +186,7 @@ export default function MatchesPage() {
                 <Plus className="mr-2 w-4 h-4" /> Create Match
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] overflow-y-auto max-w-[60vw]">
               <DialogTitle>Create Match</DialogTitle>
               <CreateMatchForm onClose={() => setIsDialogOpen(false)} />
             </DialogContent>

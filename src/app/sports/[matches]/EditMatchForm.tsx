@@ -17,11 +17,11 @@ import { matches } from '@/data/type';
 const searchParams = new URLSearchParams(window.location.search);
 const sportCategoryID = searchParams.get('sportCategoryID');
 
-interface CreateMatchFormProps {
+interface EditMatchFormProps {
   onClose: () => void;
 }
 
-const CreateMatchForm = ({ onClose }: CreateMatchFormProps) => {
+const EditMatchForm = ({ onClose }: EditMatchFormProps) => {
   const form = useForm<matches>({
     defaultValues: {
       sportCategoryID: sportCategoryID || '',
@@ -303,4 +303,4 @@ const CreateMatchForm = ({ onClose }: CreateMatchFormProps) => {
   );
 };
 
-export default CreateMatchForm;
+export default EditMatchForm;
