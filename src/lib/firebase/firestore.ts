@@ -16,6 +16,7 @@ import {
   ref,
   uploadBytes,
   getDownloadURL,
+  getStorage,
   deleteObject,
 } from 'firebase/storage';
 import {
@@ -66,7 +67,28 @@ export class Firestore {
   }
 
   async deleteSportCategory(sportCategoryID: string) {
-    await deleteDoc(doc(db, 'category', sportCategoryID));
+    // Retrieve the document to get the image URL
+    const docRef = doc(db, 'category', sportCategoryID);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const categoryData = docSnap.data();
+      
+      // Delete image from Firebase Storage if it exists
+      if (categoryData.imageUrl) {
+        try {
+          const storage = getStorage();
+          const imageRef = ref(storage, categoryData.imageUrl);
+          await deleteObject(imageRef);
+          console.log('Image deleted from storage');
+        } catch (error) {
+          console.error('Error deleting image from storage:', error);
+        }
+      }
+    }
+  
+    // Delete the document from Firestore
+    await deleteDoc(docRef);
     console.log('Document with ID: ', sportCategoryID, ' deleted');
   }
 

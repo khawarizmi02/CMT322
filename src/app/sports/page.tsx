@@ -118,32 +118,42 @@ const SportPage = () => {
 
   const handleAddSportCategory = async (
     newSportCategory: sportCategory,
-    sportID: string
+    sportID: string,
+    imageFile?: File
   ) => {
     try {
+      // Create FormData if an image is uploaded
+      const formData = new FormData();
+      formData.append('sportCategoryName', newSportCategory.sportCategoryName);
+      formData.append('sportID', sportID);
+      
+      // Append image file if provided
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+  
       const response = await fetch(`/api/sport-category`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // Add the sport ID to the request body
-        body: JSON.stringify({ newSportCategory, sportID }),
+        body: formData, // Use FormData instead of JSON
+        // Do not set Content-Type header, let browser set it for multipart/form-data
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to add sport category');
       }
-      if (response.ok) {
-        toast({
-          title: 'Success',
-          description: 'New sport category added successfully!',
-        });
-        readSportCategory(); // Refresh the sport categories list
-      } else {
-        alert('Failed to add new sport category.');
-      }
+  
+      toast({
+        title: 'Success',
+        description: 'New sport category added successfully!',
+      });
+      readSportCategory(); // Refresh the sport categories list
     } catch (error) {
       console.error('Error adding new sport category:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to add sport category',
+        variant: 'destructive'
+      });
     }
   };
 
