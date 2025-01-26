@@ -70,10 +70,10 @@ export class Firestore {
     // Retrieve the document to get the image URL
     const docRef = doc(db, 'category', sportCategoryID);
     const docSnap = await getDoc(docRef);
-    
+
     if (docSnap.exists()) {
       const categoryData = docSnap.data();
-      
+
       // Delete image from Firebase Storage if it exists
       if (categoryData.imageUrl) {
         try {
@@ -86,7 +86,7 @@ export class Firestore {
         }
       }
     }
-  
+
     // Delete the document from Firestore
     await deleteDoc(docRef);
     console.log('Document with ID: ', sportCategoryID, ' deleted');
@@ -209,6 +209,22 @@ export class Firestore {
     });
     console.log(matches);
     return matches;
+  }
+
+  async updateMatch(matchID: string, data: matches) {
+    try {
+      await updateDoc(doc(db, 'matches', matchID), data);
+      console.log('Document with ID: ', matchID, ' updated');
+      return true;
+    } catch (e) {
+      console.error('Error updating document: ', e);
+      return false;
+    }
+  }
+
+  async deleteMatch(matchID: string) {
+    await deleteDoc(doc(db, 'matches', matchID));
+    console.log('Document with ID: ', matchID, ' deleted');
   }
 
   /* NEWS MODULE */

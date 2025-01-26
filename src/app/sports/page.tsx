@@ -126,21 +126,21 @@ const SportPage = () => {
       const formData = new FormData();
       formData.append('sportCategoryName', newSportCategory.sportCategoryName);
       formData.append('sportID', sportID);
-      
+
       // Append image file if provided
       if (imageFile) {
         formData.append('image', imageFile);
       }
-  
+
       const response = await fetch(`/api/sport-category`, {
         method: 'POST',
         body: formData, // Use FormData instead of JSON
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to add sport category');
       }
-  
+
       toast({
         title: 'Success',
         description: 'New sport category added successfully!',
@@ -151,7 +151,7 @@ const SportPage = () => {
       toast({
         title: 'Error',
         description: 'Failed to add sport category',
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   };
@@ -260,9 +260,7 @@ const SportPage = () => {
     <div className="container mx-auto p-6 space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="space-y-1">
-          <h1 className="text-4xl font-bold tracking-tight">
-            Sports List
-          </h1>
+          <h1 className="text-4xl font-bold tracking-tight">Sports List</h1>
           <p className="text-muted-foreground">
             View the list of sports and their categories
           </p>
@@ -325,20 +323,25 @@ const SportPage = () => {
             <TabsContent key={sportName} value={sportName}>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {categories.map((category) => (
-                  <Card 
-                    key={category.sportCategoryID} 
-                    className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer" 
-                    onClick={() => category.sportCategoryID && handleViewMatch(category.sportCategoryID)}
+                  <Card
+                    key={category.sportCategoryID}
+                    className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                    onClick={() =>
+                      category.sportCategoryID &&
+                      handleViewMatch(category.sportCategoryID)
+                    }
                   >
-                    {category.imageUrl && (
-                      <div className="relative h-48 overflow-hidden">
-                        <img
-                          src={category.imageUrl}
-                          alt={category.sportCategoryName}
-                          className="w-full h-full object-cover transition-transform hover:scale-105"
-                        />
-                      </div>
-                    )}
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={
+                          category.imageUrl
+                            ? category.imageUrl
+                            : 'https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80'
+                        }
+                        alt={category.sportCategoryName}
+                        className="w-full h-full object-cover transition-transform hover:scale-105"
+                      />
+                    </div>
                     <CardHeader className="space-y-1">
                       <div className="flex justify-between items-start">
                         <CardTitle className="text-xl">
@@ -350,11 +353,12 @@ const SportPage = () => {
                             size="icon"
                             onClick={(e) => {
                               e.stopPropagation();
-                              category.sportCategoryID && confirmDelete(
-                                category.sportCategoryID, 
-                                'category', 
-                                category.sportCategoryName
-                              );
+                              category.sportCategoryID &&
+                                confirmDelete(
+                                  category.sportCategoryID,
+                                  'category',
+                                  category.sportCategoryName
+                                );
                             }}
                             className="text-destructive hover:text-destructive/90"
                           >
