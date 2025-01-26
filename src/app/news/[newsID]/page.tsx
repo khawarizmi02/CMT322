@@ -72,7 +72,6 @@ const Page = () => {
   };
 
   const handleSave = async () => {
-    setLoading(true);
     try {
       const response = await fetch(`/api/news/${newsID}`, {
         method: 'PATCH',
@@ -82,14 +81,12 @@ const Page = () => {
         body: JSON.stringify(newsArticle),
       });
       const data = await response.json();
-      setNewsArticle(data.newsList);
       setIsEditing(false);
+      await router.refresh();
       toast({
         title: 'Success',
         description: 'News has been updated successfully',
       });
-
-      router.refresh();
     } catch (error) {
       toast({
         title: 'Error',
