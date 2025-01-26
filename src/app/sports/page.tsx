@@ -135,7 +135,6 @@ const SportPage = () => {
       const response = await fetch(`/api/sport-category`, {
         method: 'POST',
         body: formData, // Use FormData instead of JSON
-        // Do not set Content-Type header, let browser set it for multipart/form-data
       });
   
       if (!response.ok) {
@@ -262,10 +261,10 @@ const SportPage = () => {
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="space-y-1">
           <h1 className="text-4xl font-bold tracking-tight">
-            Sports Management
+            Sports List
           </h1>
           <p className="text-muted-foreground">
-            Manage sports categories and medal assignments
+            View the list of sports and their categories
           </p>
         </div>
         {isSignedIn && (
