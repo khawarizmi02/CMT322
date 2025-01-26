@@ -16,6 +16,7 @@ import LoadinComponent from '@/components/LoadingComponent';
 import { useToast } from '@/hooks/use-toast';
 import { news } from '@/data/type';
 import Tiptap from '@/components/Tiptap';
+import { set } from 'date-fns';
 
 const Page = () => {
   const { toast } = useToast();
@@ -72,6 +73,7 @@ const Page = () => {
   };
 
   const handleSave = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`/api/news/${newsID}`, {
         method: 'PATCH',
