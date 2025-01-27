@@ -36,7 +36,8 @@ export default function MatchesPage() {
 
   const readMatches = async () => {
     setLoading(true);
-    console.log(`localhost:3000/api/sports/${sportCategoryID}`);
+    console.log('Starting readMatches with sportCategoryID:', sportCategoryID); // Debug log
+
     try {
       const response = await fetch(`/api/sports/${sportCategoryID}`, {
         method: 'GET',
@@ -45,19 +46,22 @@ export default function MatchesPage() {
         }
       });
       
+      console.log('API Response:', response); // Debug log
+      
       if (!response.ok) {
-        console.error('Failed to read matches');
-        console.error('Error:', response);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data = await response.json();
+      console.log('Received data:', data); // Debug log
+      
       setMatches(data.matches);
     } catch (error) {
       console.error('Error reading matches:', error);
     } finally {
       setLoading(false);
     }
-  };
+};
   
   useEffect(() => {
     if (sportCategoryID) {
@@ -68,12 +72,11 @@ export default function MatchesPage() {
   const filteredMatches = matches.filter(
     (match) => match.sportCategoryID === sportCategoryID
   );
-
-  const currentMatches = filteredMatches.filter(
-    (match) => match.matchStatus === 'ongoing'
-  );
   const upcomingMatches = filteredMatches.filter(
     (match) => match.matchStatus === 'upcoming'
+  );
+  const currentMatches = filteredMatches.filter(
+    (match) => match.matchStatus === 'ongoing'
   );
   const pastMatches = filteredMatches.filter(
     (match) => match.matchStatus === 'completed'
@@ -83,38 +86,39 @@ export default function MatchesPage() {
   console.log('pastMatches:', pastMatches);
 
   const MatchCard = ({ match }: { match: (typeof matches)[0] }) => (
-    <Card className="mb-4 hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="w-2 h-2 bg-green-500 rounded-full" />
-              <span className="text-sm text-gray-600">{match.sportName}</span>
-            </div>
-            <h3 className="text-2xl font-bold mb-4">
-              {match.teams?.[0]?.toString()} <span className="text-gray-400">vs</span> {match.teams?.[1]?.toString()}
-            </h3>
+  <Card className="mb-4 hover:shadow-md transition-shadow">
+    <CardContent className="p-6">
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 bg-green-500 rounded-full" />
+            <span className="text-sm text-gray-600">{match.sportName}</span>
           </div>
-          <Button variant="ghost" size="icon">
-            <PenSquare className="h-4 w-4" />
-          </Button>
+          <h3 className="text-2xl font-bold mb-4">
+            {match.teams && match.teams[0] && (typeof match.teams[0] === 'string' ? match.teams[0] : match.teams[0].name)} <span className="text-gray-400">vs</span>{' '}
+            {match.teams && match.teams[1] && (typeof match.teams[1] === 'string' ? match.teams[1] : match.teams[1].name)}
+          </h3>
         </div>
-  
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-gray-600">
-            <Calendar className="h-4 w-4" />
-            <span>{match.matchDate}</span>
-            <span className="text-gray-400">|</span>
-            <span>{match.matchTime}</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <MapPin className="h-4 w-4" />
-            <span>{match.matchVenue}</span>
-          </div>
+        <Button variant="ghost" size="icon">
+          <PenSquare className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-center gap-2 text-gray-600">
+          <Calendar className="h-4 w-4" />
+          <span>{match.matchDate}</span>
+          <span className="text-gray-400">|</span>
+          <span>{match.matchTime}</span>
         </div>
-      </CardContent>
-    </Card>
-  );
+        <div className="flex items-center gap-2 text-gray-600">
+          <MapPin className="h-4 w-4" />
+          <span>{match.matchVenue}</span>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
 
   const [MatchesList, setMatchesList] = useState([]);
 

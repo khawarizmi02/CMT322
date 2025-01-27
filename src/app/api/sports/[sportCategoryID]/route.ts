@@ -1,23 +1,38 @@
+
 import { NextRequest, NextResponse } from 'next/server';
 import { isSignedIn } from '@/utils/roles';
 import firestore from '@/lib/firebase/firestore';
 
 export async function GET(req: NextRequest) {
-  // const { searchParams } = new URL(req.url);
-  // const id = searchParams.get('sportCategoryID');
-
-  const url = new URL(req.url);
-  const id = url.pathname.split('/').pop();
-  if (!id) {
-    return new NextResponse('ID is required', { status: 400 });
-  }
   try {
-    // Read the document with the specified id in the 'News' collection
+    // Extract sportCategoryID from URL path
+    const url = new URL(req.url);
+    const id = url.pathname.split('/').pop();
+
+    // Validate id
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Sport Category ID is required' }, 
+        { status: 400 }
+      );
+    }
+
+    // Fetch matches data
     const matches = await firestore.readMatchesBySportCategory(id);
 
+    // Return empty array if no matches found
+    if (!matches || matches.length === 0) {
+      return NextResponse.json({ matches: [] });
+    }
+
+    // Return matches data
     return NextResponse.json({ matches });
+
   } catch (error) {
-    console.error('Error retrieving matches data:', error);
-    return new NextResponse('Error retrieving matches data', { status: 500 });
+    console.error('Error retrieving matches:', error);
+    return NextResponse.json(
+      { error: 'Failed to retrieve matches' }, 
+      { status: 500 }
+    );
   }
 }
