@@ -183,30 +183,48 @@ export class Firestore {
   }
 
   async readMatchesBySportCategory(sportCategoryID: string) {
-    const matches: matches[] = [];
-    const q = query(
-      collection(db, 'matches'),
-      where('sportCategoryID', '==', sportCategoryID)
-    );
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      matches.push({
-        matchID: doc.id,
-        sportID: doc.data().sportID,
-        matchDate: doc.data().matchDate,
-        matchTime: doc.data().matchTime,
-        matchStatus: doc.data().matchStatus,
-        matchVenue: doc.data().matchVenue,
-        matchWinner: doc.data().matchWinner,
-        matchScore: doc.data().matchScore,
-        teams: doc.data().teams,
-        sportName: doc.data().sportName,
-        sportCategory: doc.data().sportCategory,
-        sportCategoryID: doc.data().sportCategoryID,
+    try {
+      console.log('Attempting to fetch matches for sportCategoryID:', sportCategoryID);
+
+      const matchesRef = collection(db, 'matches');
+      const q = query(matchesRef, where('match.sportCategoryID', '==', sportCategoryID));
+      const querySnapshot = await getDocs(q);
+
+      console.log('Query snapshot size:', querySnapshot.size);
+
+      const matchesBySportCategory = querySnapshot.docs.map((doc) => {
+        const matchData = doc.data().match;  // Access the nested 'match' object
+        return {
+          matchID: doc.id,
+          matchDate: matchData.matchDate,
+          matchTime: matchData.matchTime,
+          matchStatus: matchData.matchStatus,
+          matchVenue: matchData.matchVenue,
+          teams: matchData.teams,
+          sportName: matchData.sportName,
+          sportCategory: matchData.sportCategory,
+          sportCategoryID: matchData.sportCategoryID,
+        };
       });
-    });
-    console.log(matches);
-    return matches;
+
+      console.log('Processed matches:', matchesBySportCategory);
+      return matchesBySportCategory;
+    } catch (error) {
+      console.error('Error in readMatchesBySportCategory:', error);
+      return [];
+    }
+}
+
+  async readMatch(matchID: string) {
+    const docRef = doc(db, 'matches', matchID);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      console.log('Document data:', docSnap.data());
+      return docSnap.data();
+    } else {
+      console.log('No such document!');
+      return null;
+    }
   }
 
   async updateMatch(matchID: string, data: matches) {

@@ -15,6 +15,7 @@ import {
   DialogTrigger,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { matches } from '@/data/type/index';
 
 import Matches from './Matches';
 import CreateMatchForm from './CreateMatchForm';
@@ -26,137 +27,98 @@ export default function MatchesPage() {
 
   const { isSignedIn } = useUser();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [matches, setMatches] = useState<matches[]>([]);
 
   const handleCreateMatch = () => {
     setIsDialogOpen(true);
   };
 
-  const matches = [
-    {
-      id: '1',
-      sportCategoryID: 'Lp9pK4ZbTS4DBOrfydiM',
-      date: '2025-01-15',
-      time: '15:00',
-      venue: 'Stadium A',
-      status: 'ongoing',
-      category: "Men's Volleyball",
-      teams: ['Team A', 'Team B'],
-      participants: ['AAA', 'BBB', 'CCC', 'DDD', 'EEE', 'FFF', 'GGG', 'HHH'],
-      resultId: 'R001',
-    },
-    {
-      id: '2',
-      sportCategoryID: 'Lp9pK4ZbTS4DBOrfydiM',
-      date: '2025-01-16',
-      time: '18:00',
-      venue: 'Arena B',
-      status: 'upcoming',
-      category: "Men's Volleyball",
-      teams: ['Team X', 'Team Y'],
-      participants: [
-        'Ali',
-        'Chong',
-        'Raju',
-        'John',
-        'Mike',
-        'Kim',
-        'Faizal',
-        'Shah',
-      ],
-      resultId: 'R002',
-    },
-    {
-      id: '3',
-      sportCategoryID: 'czaOVNAQOAKZSSubskF9',
-      date: '2025-01-17',
-      time: '12:00',
-      venue: 'Court C',
-      status: 'ongoing',
-      category: "Women's Volleyball",
-      teams: ['Team Alpha', 'Team Beta'],
-      participants: [
-        'Player 1',
-        'Player 2',
-        'Player 3',
-        'Player 4',
-        'Player 5',
-        'Player 6',
-        'Player 7',
-        'Player 8',
-      ],
-      resultId: 'R003',
-    },
-    {
-      id: '4',
-      sportCategoryID: 'czaOVNAQOAKZSSubskF9',
-      date: '2025-01-20',
-      time: '10:00',
-      venue: 'Hall D',
-      status: 'ongoing',
-      category: "Women's Volleyball",
-      teams: ['Team Charlotte', 'Team Delta'],
-      participants: [
-        'Player a',
-        'Player b',
-        'Player c',
-        'Player d',
-        'Player e',
-        'Player f',
-        'Player g',
-        'Player h',
-      ],
-      resultId: 'R004',
-    },
-  ];
+  const readMatches = async () => {
+    setLoading(true);
+    console.log('Starting readMatches with sportCategoryID:', sportCategoryID); // Debug log
+
+    try {
+      const response = await fetch(`/api/sports/${sportCategoryID}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('API Response:', response); // Debug log
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Received data:', data); // Debug log
+      
+      setMatches(data.matches);
+    } catch (error) {
+      console.error('Error reading matches:', error);
+    } finally {
+      setLoading(false);
+    }
+};
+  
+  useEffect(() => {
+    if (sportCategoryID) {
+      readMatches();
+    }
+  }, [sportCategoryID]);
 
   const filteredMatches = matches.filter(
     (match) => match.sportCategoryID === sportCategoryID
   );
-
-  const currentMatches = filteredMatches.filter(
-    (match) => match.status === 'ongoing'
-  );
   const upcomingMatches = filteredMatches.filter(
-    (match) => match.status === 'upcoming'
+    (match) => match.matchStatus === 'upcoming'
+  );
+  const currentMatches = filteredMatches.filter(
+    (match) => match.matchStatus === 'ongoing'
   );
   const pastMatches = filteredMatches.filter(
-    (match) => match.status === 'past'
+    (match) => match.matchStatus === 'completed'
   );
+  console.log('currentMatches:', currentMatches);
+  console.log('upcomingMatches:', upcomingMatches);
+  console.log('pastMatches:', pastMatches);
 
   const MatchCard = ({ match }: { match: (typeof matches)[0] }) => (
-    <Card className="mb-4 hover:shadow-md transition-shadow">
-      <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="w-2 h-2 bg-green-500 rounded-full" />
-              <span className="text-sm text-gray-600">{match.category}</span>
-            </div>
-            <h3 className="text-2xl font-bold mb-4">
-              {match.teams[0]} <span className="text-gray-400">vs</span>{' '}
-              {match.teams[1]}
-            </h3>
+  <Card className="mb-4 hover:shadow-md transition-shadow">
+    <CardContent className="p-6">
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 bg-green-500 rounded-full" />
+            <span className="text-sm text-gray-600">{match.sportName}</span>
           </div>
-          <Button variant="ghost" size="icon">
-            <PenSquare className="h-4 w-4" />
-          </Button>
+          <h3 className="text-2xl font-bold mb-4">
+            {match.teams && match.teams[0] && (typeof match.teams[0] === 'string' ? match.teams[0] : match.teams[0].name)} <span className="text-gray-400">vs</span>{' '}
+            {match.teams && match.teams[1] && (typeof match.teams[1] === 'string' ? match.teams[1] : match.teams[1].name)}
+          </h3>
         </div>
+        <Button variant="ghost" size="icon">
+          <PenSquare className="h-4 w-4" />
+        </Button>
+      </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-gray-600">
-            <Calendar className="h-4 w-4" />
-            <span>{match.date}</span>
-            <span className="text-gray-400">|</span>
-            <span>{match.time}</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <MapPin className="h-4 w-4" />
-            <span>{match.venue}</span>
-          </div>
+      <div className="space-y-2">
+        <div className="flex items-center gap-2 text-gray-600">
+          <Calendar className="h-4 w-4" />
+          <span>{match.matchDate}</span>
+          <span className="text-gray-400">|</span>
+          <span>{match.matchTime}</span>
         </div>
-      </CardContent>
-    </Card>
-  );
+        <div className="flex items-center gap-2 text-gray-600">
+          <MapPin className="h-4 w-4" />
+          <span>{match.matchVenue}</span>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
 
   const [MatchesList, setMatchesList] = useState([]);
 
@@ -188,7 +150,7 @@ export default function MatchesPage() {
             </DialogTrigger>
             <DialogContent className="max-h-[90vh] overflow-y-auto max-w-[60vw]">
               <DialogTitle>Create Match</DialogTitle>
-              <CreateMatchForm onClose={() => setIsDialogOpen(false)} />
+              <CreateMatchForm onClose={() => setIsDialogOpen(false)} sportCategID={sportCategoryID || undefined} />
             </DialogContent>
           </Dialog>
         )}
@@ -219,7 +181,7 @@ export default function MatchesPage() {
         <TabsContent value="current" className="space-y-4">
           {currentMatches.length > 0 ? (
             currentMatches.map((match) => (
-              <MatchCard key={match.id} match={match} />
+              <MatchCard key={match.matchID} match={match} />
             ))
           ) : (
             <Card>
@@ -233,7 +195,7 @@ export default function MatchesPage() {
         <TabsContent value="upcoming" className="space-y-4">
           {upcomingMatches.length > 0 ? (
             upcomingMatches.map((match) => (
-              <MatchCard key={match.id} match={match} />
+              <MatchCard key={match.matchID} match={match} />
             ))
           ) : (
             <Card>
@@ -247,7 +209,7 @@ export default function MatchesPage() {
         <TabsContent value="past" className="space-y-4">
           {pastMatches.length > 0 ? (
             pastMatches.map((match) => (
-              <MatchCard key={match.id} match={match} />
+              <MatchCard key={match.matchID} match={match} />
             ))
           ) : (
             <Card>

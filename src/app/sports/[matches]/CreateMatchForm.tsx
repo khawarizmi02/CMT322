@@ -13,18 +13,21 @@ import {
 } from '@/components/ui/form';
 import { PlusIcon, TrashIcon } from 'lucide-react';
 import { matches } from '@/data/type';
+import { useSearchParams } from 'next/navigation';
 
-const searchParams = new URLSearchParams(window.location.search);
-const sportCategoryID = searchParams.get('sportCategoryID');
+// const searchParams = new URLSearchParams(window.location.search);
+// const sportCategoryID = searchParams.get('sportCategoryID');
+// const sportCategID = useSearchParams().get('sportCategoryID');
 
 interface CreateMatchFormProps {
   onClose: () => void;
+  sportCategID?: string;
 }
 
-const CreateMatchForm = ({ onClose }: CreateMatchFormProps) => {
+const CreateMatchForm = ({  onClose, sportCategID }: CreateMatchFormProps) => {
   const form = useForm<matches>({
     defaultValues: {
-      sportCategoryID: sportCategoryID || '',
+      sportCategoryID: sportCategID || '',
       matchDate: '',
       matchTime: '',
       matchVenue: '',
@@ -201,7 +204,6 @@ const CreateMatchForm = ({ onClose }: CreateMatchFormProps) => {
     );
   };
 
-  // const onSubmit: SubmitHandler<matches> = async (data) => {
   async function onSubmit(data: matches) {
     setLoading(true);
 
