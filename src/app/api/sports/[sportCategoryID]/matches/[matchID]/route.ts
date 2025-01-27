@@ -8,19 +8,20 @@ export async function PATCH(req: NextRequest) {
   }
 
   try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get('matchID');
+    const { pathname } = new URL(req.url);
+    const pathParts = pathname.split('/');
+    const matchID = pathParts[pathParts.indexOf('matches') + 1];
     const body = await req.json();
     const { data } = body;
 
-    if (!id) {
+    if (!matchID) {
       return new NextResponse('ID is required', { status: 400 });
     }
 
-    console.log('Updating match:', id, data);
+    console.log('Updating match:', matchID, data);
 
     // Update the match in Firestore
-    await firestore.updateMatch(id, data);
+    await firestore.updateMatch(matchID, data);
 
     return NextResponse.json({ message: 'Match updated' });
   } catch (error) {
@@ -35,17 +36,18 @@ export async function DELETE(req: NextRequest) {
   }
 
   try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get('matchID');
+    const { pathname } = new URL(req.url);
+    const pathParts = pathname.split('/');
+    const matchID = pathParts[pathParts.indexOf('matches') + 1];
 
-    if (!id) {
+    if (!matchID) {
       return new NextResponse('ID is required', { status: 400 });
     }
 
-    console.log('Deleting match:', id);
+    console.log('Deleting match:', matchID);
 
     // Delete the match from Firestore
-    await firestore.deleteMatch(id);
+    await firestore.deleteMatch(matchID);
 
     return NextResponse.json({ message: 'Match deleted' });
   } catch (error) {
