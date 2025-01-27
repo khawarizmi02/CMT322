@@ -21,51 +21,49 @@ export async function POST(req: Request) {
       abandon_at,
     } = data;
 
-    if (type === 'session.created') {
-      // Create session in Firestore
-      const docRef = await firestore.createSession({
-        session_id: id,
-        user_id,
-        client_id,
-        created_at,
-        expire_at,
-        last_active_at,
-        status,
-        updated_at,
-        abandon_at,
-      });
+    // Create session in Firestore
+    const docRef = await firestore.createSession({
+      session_id: id,
+      user_id,
+      client_id,
+      created_at,
+      expire_at,
+      last_active_at,
+      status,
+      updated_at,
+      abandon_at,
+    });
 
-      if (docRef) {
-        return NextResponse.json({ session_id: docRef.id });
-      } else {
-        throw new Error('Failed to create session');
-      }
+    if (docRef) {
+      return NextResponse.json({ session_id: docRef.id });
+    } else {
+      throw new Error('Failed to create session');
     }
 
-    if (
-      type === 'session.ended' ||
-      type === 'session.revoked' ||
-      type === 'session.removed'
-    ) {
-      // Update session in Firestore
-      const data = {
-        user_id,
-        client_id,
-        created_at,
-        expire_at,
-        last_active_at,
-        status,
-        updated_at,
-        abandon_at,
-      };
-      const success = await firestore.updateSession(id, data, type);
+    // if (
+    //   type === 'session.ended' ||
+    //   type === 'session.revoked' ||
+    //   type === 'session.removed'
+    // ) {
+    //   // Update session in Firestore
+    //   const data = {
+    //     user_id,
+    //     client_id,
+    //     created_at,
+    //     expire_at,
+    //     last_active_at,
+    //     status,
+    //     updated_at,
+    //     abandon_at,
+    //   };
+    //   const success = await firestore.updateSession(id, data, type);
 
-      if (success) {
-        return NextResponse.json({ session_id: id });
-      } else {
-        throw new Error('Failed to update session');
-      }
-    }
+    //   if (success) {
+    //     return NextResponse.json({ session_id: id });
+    //   } else {
+    //     throw new Error('Failed to update session');
+    //   }
+    // }
 
     return new NextResponse('Webhook received', { status: 200 });
   } catch (error) {
