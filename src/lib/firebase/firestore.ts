@@ -182,31 +182,71 @@ export class Firestore {
     return matches;
   }
 
+  // async readMatchesBySportCategory(sportCategoryID: string) {
+  //   const matches: matches[] = [];
+  //   const q = query(
+  //     collection(db, 'matches'),
+  //     where('matchStatus', '==', "upcoming")
+  //   );
+  //   const querySnapshot = await getDocs(q);
+  //   querySnapshot.forEach((doc) => {
+  //     matches.push({
+  //       matchID: doc.id,
+  //       sportID: doc.data().sportID,
+  //       matchDate: doc.data().matchDate,
+  //       matchTime: doc.data().matchTime,
+  //       matchStatus: doc.data().matchStatus,
+  //       matchVenue: doc.data().matchVenue,
+  //       matchWinner: doc.data().matchWinner,
+  //       matchScore: doc.data().matchScore,
+  //       teams: doc.data().teams,
+  //       sportName: doc.data().sportName,
+  //       sportCategory: doc.data().sportCategory,
+  //       sportCategoryID: doc.data().sportCategoryID,
+  //     });
+  //   });
+  //   console.log("server", matches);
+  //   return matches;
+  // }
   async readMatchesBySportCategory(sportCategoryID: string) {
     const matches: matches[] = [];
-    const q = query(
-      collection(db, 'matches'),
-      where('sportCategoryID', '==', sportCategoryID)
-    );
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      matches.push({
-        matchID: doc.id,
-        sportID: doc.data().sportID,
-        matchDate: doc.data().matchDate,
-        matchTime: doc.data().matchTime,
-        matchStatus: doc.data().matchStatus,
-        matchVenue: doc.data().matchVenue,
-        matchWinner: doc.data().matchWinner,
-        matchScore: doc.data().matchScore,
-        teams: doc.data().teams,
-        sportName: doc.data().sportName,
-        sportCategory: doc.data().sportCategory,
-        sportCategoryID: doc.data().sportCategoryID,
-      });
+    const querySnapshot = await getDocs(collection(db, 'matches'));
+    querySnapshot.forEach(async (doc) => {
+
+      var data = await this.readMatch(doc.id);
+      var match = data?.match;
+      console.log("data", match);
+      
+        matches.push({
+          matchID: doc.id,
+          sportID: match.sportID,
+          matchDate: match.matchDate,
+          matchTime: match.matchTime,
+          matchStatus: match.matchStatus,
+          matchVenue: match.matchVenue,
+          matchWinner: match.matchWinner,
+          matchScore: match.matchScore,
+          teams: match.teams,
+          sportName: match.sportName,
+          sportCategory: match.sportCategory,
+          sportCategoryID: match.sportCategoryID,
+        });
+      
     });
-    console.log(matches);
+    console.log("matches", matches);
     return matches;
+  }
+
+  async readMatch(matchID: string) {
+    const docRef = doc(db, 'matches', matchID);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      console.log('Document data:', docSnap.data());
+      return docSnap.data();
+    } else {
+      console.log('No such document!');
+      return null;
+    }
   }
 
   /* NEWS MODULE */
